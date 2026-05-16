@@ -1,0 +1,3035 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InternIQ – Smart Internship Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --bg:#080c18;--bg2:#0d1120;--bg3:#121829;
+  --card:#151c30;--card2:#1a2240;
+  --border:rgba(99,130,255,0.12);--border2:rgba(99,130,255,0.28);
+  --accent:#6382ff;--accent2:#a78bfa;--accent3:#34d399;
+  --text:#e8ecff;--text2:#8899cc;--text3:#4a5470;
+  --danger:#f87171;--warn:#fbbf24;--success:#34d399;
+  --radius:12px;--radius2:18px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+h1,h2,h3,h4{font-family:'Syne',sans-serif}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+
+/* PAGES — full-viewport switching, zero scroll bleed between pages */
+.page{
+  display:none;
+}
+.page.active{
+  display:block;
+  min-height:100vh;
+}
+
+/* ========= LANDING ========= */
+#page-landing{background:var(--bg);overflow:hidden;position:relative}
+.orb{position:fixed;border-radius:50%;filter:blur(100px);opacity:0.13;pointer-events:none;z-index:0}
+.orb1{width:700px;height:700px;background:#6382ff;top:-200px;left:-200px;animation:drift 9s ease-in-out infinite alternate}
+.orb2{width:500px;height:500px;background:#a78bfa;bottom:-100px;right:-100px;animation:drift 11s ease-in-out infinite alternate-reverse}
+.orb3{width:280px;height:280px;background:#34d399;top:45%;left:45%;animation:drift 13s ease-in-out infinite alternate}
+@keyframes drift{from{transform:translate(0,0)}to{transform:translate(35px,25px)}}
+
+.landing-nav{position:relative;z-index:10;display:flex;align-items:center;justify-content:space-between;padding:1.6rem 4rem}
+.logo{font-family:'Syne',sans-serif;font-size:1.55rem;font-weight:800;color:var(--text);letter-spacing:-0.5px}
+.logo span{color:var(--accent)}
+.nav-btns{display:flex;gap:0.8rem;align-items:center}
+
+.btn{font-family:'DM Sans',sans-serif;font-size:0.88rem;font-weight:500;border:none;cursor:pointer;border-radius:8px;padding:0.6rem 1.4rem;transition:all 0.2s;display:inline-flex;align-items:center;gap:0.4rem}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--text2)}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:#7b96ff;transform:translateY(-1px);box-shadow:0 8px 24px rgba(99,130,255,0.35)}
+.btn-success{background:var(--success);color:#080c18;font-weight:600}
+.btn-success:hover{background:#5cf0b4;transform:translateY(-1px)}
+.btn-danger{background:transparent;border:1px solid var(--danger);color:var(--danger);font-size:0.8rem;padding:0.35rem 0.85rem}
+.btn-danger:hover{background:rgba(248,113,113,0.1)}
+.btn-sm{padding:0.38rem 0.9rem;font-size:0.8rem}
+.btn-xl{padding:0.9rem 2.4rem;font-size:1rem;border-radius:10px}
+.btn:disabled{opacity:0.5;cursor:not-allowed;transform:none!important}
+
+.hero{position:relative;z-index:5;text-align:center;padding:7rem 2rem 4rem}
+.hero-badge{display:inline-flex;align-items:center;gap:0.5rem;background:rgba(99,130,255,0.1);border:1px solid var(--border2);border-radius:50px;padding:0.4rem 1.2rem;font-size:0.8rem;color:var(--accent);margin-bottom:2rem}
+.hero-badge span{width:6px;height:6px;background:var(--accent3);border-radius:50%;display:inline-block;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.7)}}
+.hero h1{font-size:clamp(2.6rem,5vw,4.2rem);font-weight:800;line-height:1.08;letter-spacing:-2px;margin-bottom:1.5rem}
+.hero h1 em{font-style:normal;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:1.1rem;color:var(--text2);max-width:520px;margin:0 auto 2.5rem;line-height:1.75;font-weight:300}
+.hero-actions{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+
+.features-grid{position:relative;z-index:5;display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:1.4rem;padding:2rem 4rem 5rem;max-width:1100px;margin:0 auto}
+.feat-card{background:rgba(21,28,48,0.75);border:1px solid var(--border);border-radius:var(--radius2);padding:1.5rem;backdrop-filter:blur(12px);transition:all 0.3s}
+.feat-card:hover{border-color:var(--border2);transform:translateY(-4px)}
+.feat-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:1rem;font-size:1.25rem}
+.feat-icon.blue{background:rgba(99,130,255,0.15)}
+.feat-icon.purple{background:rgba(167,139,250,0.15)}
+.feat-icon.green{background:rgba(52,211,153,0.15)}
+.feat-icon.amber{background:rgba(251,191,36,0.15)}
+.feat-card h3{font-size:0.95rem;font-weight:600;margin-bottom:0.4rem}
+.feat-card p{font-size:0.83rem;color:var(--text2);line-height:1.6}
+
+/* ========= AUTH ========= */
+#page-login,#page-register,#page-admin-login{
+  background:var(--bg);
+  min-height:100vh;
+  display:none; /* overridden by .page.active below */
+  position:relative;
+  overflow:hidden;
+}
+#page-login.active,#page-register.active,#page-admin-login.active{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.auth-card{position:relative;z-index:5;background:var(--card);border:1px solid var(--border);border-radius:var(--radius2);padding:2.8rem;width:100%;max-width:420px;box-shadow:0 32px 80px rgba(0,0,0,0.5)}
+.auth-card h2{font-size:1.6rem;margin-bottom:0.4rem}
+.auth-card .sub{color:var(--text2);font-size:0.86rem;margin-bottom:2rem;line-height:1.5}
+.form-group{margin-bottom:1.1rem}
+.form-group label{display:block;font-size:0.8rem;color:var(--text2);margin-bottom:0.4rem;font-weight:500;letter-spacing:0.3px}
+.form-group input,.form-group select,.form-group textarea{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:0.72rem 1rem;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.9rem;outline:none;transition:border 0.2s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(99,130,255,0.08)}
+.form-group textarea{resize:vertical;min-height:80px}
+.form-error{font-size:0.79rem;color:var(--danger);margin-top:0.3rem;display:none}
+.form-error.show{display:block}
+.auth-link{text-align:center;margin-top:1.2rem;font-size:0.84rem;color:var(--text2)}
+.auth-link a{color:var(--accent);text-decoration:none;cursor:pointer}
+.auth-link a:hover{text-decoration:underline}
+.auth-back{display:flex;align-items:center;gap:0.4rem;font-size:0.82rem;color:var(--text2);cursor:pointer;margin-bottom:1.5rem}
+.auth-back:hover{color:var(--text)}
+
+/* ========= DASHBOARD ========= */
+#page-dashboard,#page-admin{background:var(--bg);min-height:100vh}
+.dash-layout{display:flex;min-height:100vh}
+.sidebar{width:240px;background:var(--bg2);border-right:1px solid var(--border);padding:1.5rem 0;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100;overflow-y:auto}
+.sidebar-logo{padding:0 1.5rem 1.4rem;border-bottom:1px solid var(--border)}
+.sidebar-user{padding:1rem 1.5rem;border-bottom:1px solid var(--border)}
+.user-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.88rem;margin-bottom:0.5rem;font-family:'Syne',sans-serif}
+.user-name{font-size:0.88rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-role{font-size:0.72rem;color:var(--text3);margin-top:1px}
+.nav-menu{flex:1;padding:1rem 0}
+.nav-item{display:flex;align-items:center;gap:0.8rem;padding:0.7rem 1.5rem;cursor:pointer;color:var(--text2);font-size:0.86rem;transition:all 0.2s;border-left:3px solid transparent}
+.nav-item:hover{color:var(--text);background:rgba(99,130,255,0.05)}
+.nav-item.active{color:var(--accent);background:rgba(99,130,255,0.08);border-left-color:var(--accent)}
+.nav-item .icon{font-size:1.05rem;width:20px;text-align:center}
+.sidebar-footer{padding:1rem 1.5rem;border-top:1px solid var(--border)}
+.main-content{margin-left:240px;flex:1;padding:2rem;min-height:100vh}
+.dash-tab{display:none}
+.dash-tab.active{display:block}
+.page-header{margin-bottom:1.8rem}
+.page-header h2{font-size:1.55rem;font-weight:700;letter-spacing:-0.5px}
+.page-header p{color:var(--text2);font-size:0.86rem;margin-top:0.3rem}
+
+/* STATS */
+.stats-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-bottom:1.8rem}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.2rem 1.4rem}
+.stat-label{font-size:0.73rem;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.5rem}
+.stat-val{font-size:1.75rem;font-weight:700;font-family:'Syne',sans-serif}
+.stat-val.blue{color:var(--accent)}.stat-val.purple{color:var(--accent2)}.stat-val.green{color:var(--success)}.stat-val.amber{color:var(--warn)}
+
+/* SECTION */
+.section{background:var(--card);border:1px solid var(--border);border-radius:var(--radius2);padding:1.5rem;margin-bottom:1.4rem}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem}
+.section-header h3{font-size:0.98rem;font-weight:600}
+
+/* SKILLS */
+.skills-container{display:flex;flex-wrap:wrap;gap:0.6rem;margin-bottom:1rem;min-height:44px}
+.skill-pill{display:inline-flex;align-items:center;gap:0.45rem;background:rgba(99,130,255,0.1);border:1px solid rgba(99,130,255,0.22);border-radius:50px;padding:0.32rem 0.85rem;font-size:0.8rem;color:var(--accent)}
+.skill-pill button{background:none;border:none;color:rgba(99,130,255,0.45);cursor:pointer;font-size:1rem;line-height:1;padding:0}
+.skill-pill button:hover{color:var(--danger)}
+.skill-add{display:flex;gap:0.8rem}
+.skill-add input{flex:1}
+
+/* INTERNSHIP CARDS */
+.internship-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.2rem}
+.intern-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius2);padding:1.4rem;transition:all 0.25s;position:relative;overflow:hidden}
+.intern-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.intern-card.match-high::before{background:linear-gradient(90deg,var(--success),#7af0c3)}
+.intern-card.match-med::before{background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.intern-card.match-low::before{background:linear-gradient(90deg,var(--warn),#fde68a)}
+.intern-card:hover{border-color:var(--border2);transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,0.4)}
+.company-row{display:flex;align-items:center;gap:0.8rem;margin-bottom:0.8rem}
+.company-logo{width:38px;height:38px;border-radius:8px;background:var(--bg2);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:700;font-family:'Syne',sans-serif;font-size:1rem}
+.company-info .company-name{font-size:0.8rem;color:var(--text2)}
+.intern-title{font-size:0.98rem;font-weight:600;margin-bottom:0.6rem}
+.intern-tags{display:flex;flex-wrap:wrap;gap:0.4rem;margin-bottom:0.9rem}
+.tag{background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:0.18rem 0.55rem;font-size:0.73rem;color:var(--text2)}
+.tag.matched{background:rgba(99,130,255,0.1);border-color:rgba(99,130,255,0.3);color:var(--accent)}
+.match-score{display:flex;align-items:center;gap:0.5rem;margin-bottom:1rem}
+.match-bar{flex:1;height:4px;background:var(--bg2);border-radius:2px;overflow:hidden}
+.match-fill{height:100%;border-radius:2px}
+.match-fill.high{background:var(--success)}.match-fill.med{background:var(--accent)}.match-fill.low{background:var(--warn)}
+.match-pct{font-size:0.76rem;color:var(--text2);font-weight:500;min-width:32px}
+.intern-footer{display:flex;align-items:center;justify-content:space-between;gap:0.5rem;flex-wrap:wrap}
+.location-tag{font-size:0.76rem;color:var(--text3)}
+.applied-badge{background:rgba(52,211,153,0.12);border:1px solid rgba(52,211,153,0.3);color:var(--success);font-size:0.74rem;padding:0.18rem 0.65rem;border-radius:50px}
+
+/* TABLES */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:0.86rem}
+th{text-align:left;padding:0.7rem 1rem;font-size:0.73rem;color:var(--text3);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);font-weight:500;font-family:'DM Sans',sans-serif}
+td{padding:0.78rem 1rem;border-bottom:1px solid rgba(99,130,255,0.05);color:var(--text2);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(99,130,255,0.03)}
+.status-badge{display:inline-block;padding:0.18rem 0.65rem;border-radius:50px;font-size:0.73rem;font-weight:500}
+.status-applied{background:rgba(99,130,255,0.12);color:var(--accent)}
+.status-review{background:rgba(251,191,36,0.12);color:var(--warn)}
+.status-selected{background:rgba(52,211,153,0.12);color:var(--success)}
+.status-rejected{background:rgba(248,113,113,0.1);color:var(--danger)}
+
+/* PROFILE */
+.profile-grid{display:grid;grid-template-columns:1fr 2fr;gap:1.4rem}
+.big-avatar{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.8rem;margin:0 auto 1rem;font-family:'Syne',sans-serif}
+.profile-avatar-section{text-align:center}
+
+/* NOTIFICATIONS */
+#notif-container{position:fixed;bottom:2rem;right:2rem;z-index:9999;display:flex;flex-direction:column;gap:0.6rem}
+.notif-item{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:0.8rem 1.2rem;font-size:0.84rem;max-width:300px;animation:slideIn 0.3s ease;box-shadow:0 8px 32px rgba(0,0,0,0.5)}
+.notif-item.success{border-left:3px solid var(--success)}
+.notif-item.error{border-left:3px solid var(--danger)}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(5px)}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:var(--radius2);padding:2rem;width:92%;max-width:560px;max-height:88vh;overflow-y:auto}
+.modal h3{margin-bottom:1.2rem;font-size:1.2rem}
+.modal-footer{display:flex;gap:0.8rem;justify-content:flex-end;margin-top:1.5rem}
+
+/* SEARCH */
+.search-bar{display:flex;gap:0.8rem;margin-bottom:1.4rem;flex-wrap:wrap}
+.search-bar input,.search-bar select{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:0.6rem 1rem;color:var(--text);font-size:0.86rem;outline:none;font-family:'DM Sans',sans-serif}
+.search-bar input{flex:1;min-width:200px}
+.search-bar input:focus,.search-bar select:focus{border-color:var(--accent)}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:3rem;color:var(--text3)}
+.empty-state .icon{font-size:2.8rem;margin-bottom:1rem;opacity:0.35}
+.empty-state p{font-size:0.88rem;margin-top:0.4rem}
+
+/* LOADING SPINNER */
+.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;margin:2rem auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* SUGGESTION BOX */
+.suggestion-box{background:rgba(99,130,255,0.06);border:1px solid rgba(99,130,255,0.2);border-radius:var(--radius);padding:1.2rem;margin-top:1rem}
+.suggestion-box h4{font-size:0.85rem;color:var(--accent);margin-bottom:0.7rem;display:flex;align-items:center;gap:0.5rem}
+.suggestion-chips{display:flex;flex-wrap:wrap;gap:0.5rem}
+.suggestion-chip{background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.25);border-radius:50px;padding:0.3rem 0.8rem;font-size:0.76rem;color:var(--accent2);cursor:pointer;transition:all 0.2s}
+.suggestion-chip:hover{background:rgba(167,139,250,0.2)}
+
+/* ADMIN BADGE */
+.admin-badge{background:linear-gradient(90deg,rgba(251,191,36,0.15),rgba(251,191,36,0.08));border:1px solid rgba(251,191,36,0.3);color:var(--warn);font-size:0.72rem;padding:0.2rem 0.65rem;border-radius:50px;font-weight:600;letter-spacing:0.5px}
+
+/* LOADING OVERLAY */
+.page-loader{position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg);z-index:9998;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1rem}
+.page-loader .logo{font-size:2rem;font-family:'Syne',sans-serif;font-weight:800;color:var(--text)}
+.page-loader .logo span{color:var(--accent)}
+
+/* SKILL LEARN CARD */
+.learn-card{background:var(--card2);border:1px solid rgba(52,211,153,0.2);border-radius:var(--radius);padding:1rem;margin-top:0.8rem}
+.learn-card h4{font-size:0.82rem;color:var(--success);margin-bottom:0.5rem;display:flex;align-items:center;gap:0.4rem}
+
+/* GRID 2 */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem}
+
+select option{background:var(--bg)}
+
+@media(max-width:768px){
+  .sidebar{width:100%;height:auto;position:relative}
+  .main-content{margin-left:0}
+  .profile-grid{grid-template-columns:1fr}
+  .landing-nav{padding:1rem 1.5rem}
+  .features-grid{padding:2rem 1.5rem 4rem}
+  .grid2{grid-template-columns:1fr}
+}
+
+/* ========= ANALYTICS DASHBOARD ========= */
+.analytics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:1.4rem}
+.analytics-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.3rem 1.5rem;position:relative;overflow:hidden}
+.analytics-card::after{content:'';position:absolute;top:0;right:0;width:60px;height:60px;border-radius:50%;opacity:0.07;transform:translate(20px,-20px)}
+.analytics-card.blue::after{background:var(--accent)}
+.analytics-card.purple::after{background:var(--accent2)}
+.analytics-card.green::after{background:var(--success)}
+.analytics-card.amber::after{background:var(--warn)}
+.analytics-card.red::after{background:var(--danger)}
+.analytics-label{font-size:0.72rem;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.4rem}
+.analytics-value{font-size:2rem;font-weight:800;font-family:'Syne',sans-serif;line-height:1}
+.analytics-value.blue{color:var(--accent)}.analytics-value.purple{color:var(--accent2)}
+.analytics-value.green{color:var(--success)}.analytics-value.amber{color:var(--warn)}.analytics-value.red{color:var(--danger)}
+.analytics-sub{font-size:0.75rem;color:var(--text3);margin-top:0.3rem}
+.chart-bar-wrap{display:flex;flex-direction:column;gap:0.6rem}
+.chart-bar-row{display:flex;align-items:center;gap:0.8rem}
+.chart-bar-label{font-size:0.78rem;color:var(--text2);min-width:90px;text-align:right}
+.chart-bar-bg{flex:1;height:10px;background:var(--bg2);border-radius:5px;overflow:hidden}
+.chart-bar-fill{height:100%;border-radius:5px;transition:width 0.6s ease}
+.chart-bar-val{font-size:0.75rem;color:var(--text3);min-width:30px;text-align:right}
+.funnel-row{display:flex;align-items:center;gap:0.8rem;padding:0.6rem 0;border-bottom:1px solid var(--border)}
+.funnel-row:last-child{border:none}
+.funnel-label{font-size:0.84rem;color:var(--text2);flex:1}
+.funnel-bar-bg{width:150px;height:8px;background:var(--bg2);border-radius:4px;overflow:hidden}
+.funnel-bar-fill{height:100%;border-radius:4px}
+.funnel-count{font-size:0.84rem;font-weight:600;min-width:30px;text-align:right}
+
+/* ========= DEADLINE / EXPIRY ========= */
+.deadline-badge{display:inline-flex;align-items:center;gap:0.35rem;font-size:0.72rem;padding:0.18rem 0.65rem;border-radius:50px;font-weight:500}
+.deadline-expired{background:rgba(248,113,113,0.12);color:var(--danger);border:1px solid rgba(248,113,113,0.25)}
+.deadline-soon{background:rgba(251,191,36,0.12);color:var(--warn);border:1px solid rgba(251,191,36,0.25)}
+.deadline-ok{background:rgba(52,211,153,0.1);color:var(--success);border:1px solid rgba(52,211,153,0.2)}
+.expired-overlay{position:absolute;inset:0;background:rgba(8,12,24,0.55);border-radius:var(--radius2);display:flex;align-items:center;justify-content:center;font-size:0.85rem;color:var(--danger);font-weight:600;backdrop-filter:blur(2px);z-index:2}
+.intern-card.expired{opacity:0.65}
+.expiry-toggle{display:flex;align-items:center;gap:0.5rem;font-size:0.82rem;color:var(--text2);cursor:pointer;user-select:none}
+.toggle-switch{width:34px;height:18px;background:var(--bg2);border:1px solid var(--border);border-radius:9px;position:relative;transition:background 0.2s}
+.toggle-switch.on{background:var(--accent)}
+.toggle-switch::after{content:'';width:12px;height:12px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:left 0.2s}
+.toggle-switch.on::after{left:18px}
+
+/* ========= FULL-TEXT SEARCH ========= */
+.search-results-count{font-size:0.8rem;color:var(--text3);margin-bottom:1rem}
+.search-highlight{background:rgba(99,130,255,0.18);color:var(--accent);border-radius:3px;padding:0 2px}
+.search-advanced-toggle{font-size:0.79rem;color:var(--accent);cursor:pointer;user-select:none}
+.search-advanced-panel{background:rgba(99,130,255,0.04);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;margin-bottom:1rem;display:none}
+.search-advanced-panel.open{display:block}
+.filter-chips{display:flex;flex-wrap:wrap;gap:0.4rem;margin-top:0.5rem}
+.filter-chip{background:rgba(99,130,255,0.1);border:1px solid rgba(99,130,255,0.25);color:var(--accent);font-size:0.76rem;padding:0.22rem 0.7rem;border-radius:50px;cursor:pointer;transition:all 0.15s}
+.filter-chip:hover,.filter-chip.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* ========= AUDIT LOG ========= */
+.audit-entry{display:flex;gap:1rem;padding:0.8rem 0;border-bottom:1px solid var(--border);align-items:flex-start}
+.audit-entry:last-child{border:none}
+.audit-icon{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.85rem;flex-shrink:0;margin-top:1px}
+.audit-icon.status{background:rgba(99,130,255,0.12)}
+.audit-icon.post{background:rgba(52,211,153,0.12)}
+.audit-icon.delete{background:rgba(248,113,113,0.1)}
+.audit-icon.apply{background:rgba(167,139,250,0.12)}
+.audit-meta{flex:1}
+.audit-action{font-size:0.84rem;color:var(--text);font-weight:500}
+.audit-detail{font-size:0.77rem;color:var(--text3);margin-top:2px}
+.audit-time{font-size:0.73rem;color:var(--text3);white-space:nowrap;margin-top:3px}
+.audit-from{display:inline-block;background:rgba(248,113,113,0.1);color:var(--danger);padding:0.1rem 0.5rem;border-radius:4px;font-size:0.73rem}
+.audit-to{display:inline-block;background:rgba(52,211,153,0.1);color:var(--success);padding:0.1rem 0.5rem;border-radius:4px;font-size:0.73rem}
+.audit-filter-bar{display:flex;gap:0.6rem;margin-bottom:1rem;flex-wrap:wrap}
+.audit-filter-btn{background:var(--bg2);border:1px solid var(--border);color:var(--text2);border-radius:6px;padding:0.3rem 0.8rem;font-size:0.78rem;cursor:pointer;transition:all 0.15s;font-family:'DM Sans',sans-serif}
+.audit-filter-btn.active{background:rgba(99,130,255,0.1);border-color:var(--accent);color:var(--accent)}
+
+/* ========= SKILL RECOMMENDATION ENGINE ========= */
+.rec-engine-wrap{background:linear-gradient(135deg,rgba(99,130,255,0.06),rgba(167,139,250,0.04));border:1px solid rgba(99,130,255,0.18);border-radius:var(--radius2);padding:1.4rem;margin-bottom:1.4rem}
+.rec-engine-header{display:flex;align-items:center;gap:0.7rem;margin-bottom:1rem}
+.rec-engine-header h3{font-size:0.98rem;font-weight:600;color:var(--text)}
+.rec-engine-header .ai-badge{background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-size:0.72rem;font-weight:700;letter-spacing:1px}
+.rec-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;margin-bottom:0.7rem;transition:border-color 0.2s}
+.rec-card:hover{border-color:var(--border2)}
+.rec-card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem}
+.rec-card-title{font-size:0.88rem;font-weight:600;color:var(--text)}
+.rec-score-ring{width:42px;height:42px;position:relative;flex-shrink:0}
+.rec-score-ring svg{transform:rotate(-90deg)}
+.rec-score-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;font-family:'Syne',sans-serif}
+.rec-skills-needed{display:flex;flex-wrap:wrap;gap:0.35rem;margin-top:0.5rem}
+.rec-skill-needed{background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);color:var(--danger);font-size:0.71rem;padding:0.12rem 0.5rem;border-radius:50px}
+.rec-skill-have{background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.2);color:var(--success);font-size:0.71rem;padding:0.12rem 0.5rem;border-radius:50px}
+
+/* ========= JD PARSER ========= */
+.jd-parser-wrap{max-width:680px;margin-bottom:1.4rem}
+.jd-parser-toggle{display:flex;align-items:center;gap:0.7rem;background:linear-gradient(135deg,rgba(99,130,255,0.08),rgba(167,139,250,0.06));border:1px solid rgba(99,130,255,0.25);border-radius:var(--radius);padding:0.9rem 1.2rem;cursor:pointer;transition:all 0.2s;user-select:none}
+.jd-parser-toggle:hover{border-color:var(--accent);background:linear-gradient(135deg,rgba(99,130,255,0.13),rgba(167,139,250,0.1))}
+.jd-parser-toggle .jd-ai-icon{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
+.jd-parser-toggle .jd-label{flex:1}
+.jd-parser-toggle .jd-label strong{font-size:0.9rem;color:var(--text);display:block}
+.jd-parser-toggle .jd-label span{font-size:0.77rem;color:var(--text3)}
+.jd-parser-toggle .jd-chevron{color:var(--text3);font-size:0.8rem;transition:transform 0.2s}
+.jd-parser-toggle.open .jd-chevron{transform:rotate(180deg)}
+.jd-badge{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff;font-size:0.68rem;font-weight:700;letter-spacing:1px;padding:0.18rem 0.6rem;border-radius:50px}
+
+.jd-parser-body{display:none;background:var(--card);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius) var(--radius);padding:1.2rem}
+.jd-parser-body.open{display:block}
+.jd-parser-body textarea{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:0.8rem 1rem;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.84rem;resize:vertical;min-height:130px;outline:none;line-height:1.6;transition:border 0.2s}
+.jd-parser-body textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(99,130,255,0.08)}
+.jd-parse-btn{margin-top:0.8rem;display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap}
+.jd-parse-result{margin-top:1rem;background:rgba(52,211,153,0.05);border:1px solid rgba(52,211,153,0.2);border-radius:8px;padding:0.9rem 1.1rem;font-size:0.81rem;color:var(--text2);display:none}
+.jd-parse-result.show{display:block}
+.jd-parse-result .jd-filled-fields{display:flex;flex-wrap:wrap;gap:0.4rem;margin-top:0.5rem}
+.jd-filled-tag{background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.25);color:var(--success);font-size:0.74rem;padding:0.18rem 0.6rem;border-radius:50px}
+.jd-parse-error{margin-top:0.8rem;background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);border-radius:8px;padding:0.7rem 1rem;font-size:0.81rem;color:var(--danger);display:none}
+.jd-parse-error.show{display:block}
+
+</style>
+</head>
+<body>
+
+<!-- PAGE LOADER -->
+<div class="page-loader" id="page-loader">
+  <div class="logo">Intern<span>IQ</span></div>
+  <div class="spinner"></div>
+</div>
+
+<!-- NOTIFICATIONS -->
+<div id="notif-container"></div>
+
+<!-- ============ LANDING PAGE ============ -->
+<div class="page active" id="page-landing">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+  <nav class="landing-nav">
+    <div class="logo">Intern<span>IQ</span></div>
+    <div class="nav-btns">
+      <button class="btn btn-ghost" onclick="showPage('page-login')">Student Login</button>
+      <button class="btn btn-primary" onclick="showPage('page-register')">Get Started</button>
+      <button class="btn btn-ghost btn-sm" onclick="showPage('page-admin-login')" style="border-color:rgba(251,191,36,0.3);color:var(--warn)">⚙ Admin</button>
+    </div>
+  </nav>
+  <div class="hero">
+    <div class="hero-badge"><span></span> Smart Internship Matching</div>
+    <h1>Find internships<br>that fit <em>your skills</em></h1>
+    <p>Add your skills, get matched with real internships, and discover exactly what you need to learn to land your dream role.</p>
+    <div class="hero-actions">
+      <button class="btn btn-primary btn-xl" onclick="showPage('page-register')">Start for Free →</button>
+      <button class="btn btn-ghost btn-xl" onclick="showPage('page-login')">Sign In</button>
+    </div>
+  </div>
+  <div class="features-grid">
+    <div class="feat-card">
+      <div class="feat-icon blue">🎯</div>
+      <h3>Smart Matching</h3>
+      <p>Skills-based matching ranks internships by your profile fit percentage.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon purple">🤖</div>
+      <h3>Skill Suggestions</h3>
+      <p>Get personalized learning roadmaps for every internship you're interested in.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon green">📋</div>
+      <h3>Real Listings</h3>
+      <p>Internships posted directly by admins — no clutter, only verified opportunities.</p>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon amber">📊</div>
+      <h3>Track Applications</h3>
+      <p>Monitor your entire application pipeline in one clean dashboard.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ LOGIN PAGE ============ -->
+<div class="page" id="page-login">
+  <div class="orb orb1"></div><div class="orb orb2"></div>
+  <div class="auth-card">
+    <div class="auth-back" onclick="showPage('page-landing')">← Back to Home</div>
+    <h2>Welcome back</h2>
+    <p class="sub">Sign in to your student account</p>
+    <div class="form-group">
+      <label>Email Address</label>
+      <input type="email" id="login-email" placeholder="you@college.edu">
+      <div class="form-error" id="err-login-email">Please enter a valid email</div>
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="login-password" placeholder="••••••••">
+      <div class="form-error" id="err-login-pw">Password required</div>
+    </div>
+    <div class="form-error" id="err-login-general"></div>
+    <button class="btn btn-primary" style="width:100%;margin-top:0.5rem" id="login-btn" onclick="handleLogin()">Sign In</button>
+    <div class="auth-link">Don't have an account? <a onclick="showPage('page-register')">Register here</a></div>
+  </div>
+</div>
+
+<!-- ============ REGISTER PAGE ============ -->
+<div class="page" id="page-register">
+  <div class="orb orb1"></div><div class="orb orb2"></div>
+  <div class="auth-card">
+    <div class="auth-back" onclick="showPage('page-landing')">← Back to Home</div>
+    <h2>Create account</h2>
+    <p class="sub">Join thousands of students finding their perfect internship</p>
+    <div class="grid2">
+      <div class="form-group"><label>First Name</label><input type="text" id="reg-fname" placeholder="Rahul"></div>
+      <div class="form-group"><label>Last Name</label><input type="text" id="reg-lname" placeholder="Kumar"></div>
+    </div>
+    <div class="form-group"><label>Email Address</label><input type="email" id="reg-email" placeholder="you@college.edu"></div>
+    <div class="form-group"><label>USN / Roll Number</label><input type="text" id="reg-usn" placeholder="1VT22CS001"></div>
+    <div class="form-group">
+      <label>Branch</label>
+      <select id="reg-branch">
+        <option value="">Select Branch</option>
+        <option>Computer Science</option><option>Information Science</option>
+        <option>Electronics</option><option>Electrical</option>
+        <option>Mechanical</option><option>Civil</option><option>Other</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Semester</label>
+      <select id="reg-sem">
+        <option>3rd Semester</option><option>4th Semester</option><option selected>5th Semester</option>
+        <option>6th Semester</option><option>7th Semester</option><option>8th Semester</option>
+      </select>
+    </div>
+    <div class="form-group"><label>Password</label><input type="password" id="reg-password" placeholder="Min. 6 characters"></div>
+    <div class="form-error" id="err-reg-general"></div>
+    <button class="btn btn-primary" style="width:100%;margin-top:0.5rem" id="register-btn" onclick="handleRegister()">Create Account</button>
+    <div class="auth-link">Already have an account? <a onclick="showPage('page-login')">Sign in</a></div>
+  </div>
+</div>
+
+
+<!-- ============ ADMIN LOGIN PAGE ============ -->
+<div class="page" id="page-admin-login">
+  <div class="orb orb1"></div><div class="orb orb2"></div>
+  <div class="auth-card">
+    <div class="auth-back" onclick="showPage('page-landing')">← Back to Home</div>
+
+    <!-- LOGIN FORM -->
+    <div id="admin-login-form">
+      <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:0.4rem">
+        <h2 style="margin:0">Admin Portal</h2>
+        <span class="admin-badge">ADMIN</span>
+      </div>
+      <p class="sub">Sign in to manage internship listings</p>
+      <div class="form-group"><label>Admin Email</label><input type="email" id="admin-email" placeholder="admin@interniq.io"></div>
+      <div class="form-group"><label>Password</label><input type="password" id="admin-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')handleAdminLogin()"></div>
+      <div class="form-error" id="err-admin-general"></div>
+      <button class="btn btn-success" style="width:100%;margin-top:0.5rem" onclick="handleAdminLogin()">Enter Admin Dashboard</button>
+      <div class="auth-link" style="margin-top:1rem">New admin? <a onclick="toggleAdminRegForm(true)">Register here</a></div>
+      <div style="margin-top:0.7rem;padding:0.7rem;background:rgba(99,130,255,0.06);border-radius:8px;font-size:0.76rem;color:var(--text3)">
+        Default credentials: <span style="color:var(--text2)">admin@interniq.io</span> / <span style="color:var(--text2)">admin123</span>
+      </div>
+    </div>
+
+    <!-- REGISTER FORM -->
+    <div id="admin-reg-form" style="display:none">
+      <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:0.4rem">
+        <h2 style="margin:0">Create Admin Account</h2>
+        <span class="admin-badge">ADMIN</span>
+      </div>
+      <p class="sub">Register with an admin access code provided by the portal owner</p>
+      <div class="form-group"><label>Full Name</label><input type="text" id="admin-reg-name" placeholder="Your full name"></div>
+      <div class="form-group"><label>Email</label><input type="email" id="admin-reg-email" placeholder="you@college.edu"></div>
+      <div class="form-group"><label>Password</label><input type="password" id="admin-reg-pw" placeholder="Min. 6 characters"></div>
+      <div class="form-group">
+        <label>Admin Access Code</label>
+        <input type="text" id="admin-reg-code" placeholder="Enter the secret access code" style="letter-spacing:2px">
+        <div style="font-size:0.75rem;color:var(--text3);margin-top:0.3rem">Access code: INTERNIQ2025</div>
+      </div>
+      <div class="form-error" id="err-admin-reg"></div>
+      <button class="btn btn-primary" style="width:100%;margin-top:0.5rem" onclick="handleAdminRegister()">Create Admin Account</button>
+      <div class="auth-link" style="margin-top:1rem">Already have an account? <a onclick="toggleAdminRegForm(false)">Sign in</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ STUDENT DASHBOARD ============ -->
+<div class="page" id="page-dashboard">
+  <div class="dash-layout">
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo" style="font-size:1.25rem">Intern<span>IQ</span></div>
+      </div>
+      <div class="sidebar-user">
+        <div class="user-avatar" id="dash-avatar">U</div>
+        <div class="user-name" id="dash-name">Student</div>
+        <div class="user-role">Student</div>
+      </div>
+      <nav class="nav-menu">
+        <div class="nav-item active" onclick="switchTab('overview',this)" data-tab="overview"><span class="icon">📊</span> Overview</div>
+        <div class="nav-item" onclick="switchTab('internships',this)" data-tab="internships"><span class="icon">🎯</span> Internships</div>
+        <div class="nav-item" onclick="switchTab('skills',this)" data-tab="skills"><span class="icon">🛠️</span> My Skills</div>
+        <div class="nav-item" onclick="switchTab('applications',this)" data-tab="applications"><span class="icon">📋</span> Applications</div>
+        <div class="nav-item" onclick="switchTab('my-analytics',this)" data-tab="my-analytics"><span class="icon">📈</span> My Analytics</div>
+        <div class="nav-item" onclick="switchTab('profile',this)" data-tab="profile"><span class="icon">👤</span> Profile</div>
+      </nav>
+      <div class="sidebar-footer">
+        <button class="btn btn-danger btn-sm" style="width:100%" onclick="handleLogout()">Sign Out</button>
+      </div>
+    </aside>
+    <main class="main-content">
+      <!-- OVERVIEW TAB -->
+      <div class="dash-tab active" id="tab-overview">
+        <div class="page-header"><h2>Dashboard</h2><p id="dash-greeting">Welcome back!</p></div>
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-label">Skills Added</div><div class="stat-val blue" id="ov-skills">0</div></div>
+          <div class="stat-card"><div class="stat-label">Available Internships</div><div class="stat-val purple" id="ov-interns">0</div></div>
+          <div class="stat-card"><div class="stat-label">Applications</div><div class="stat-val green" id="ov-apps">0</div></div>
+          <div class="stat-card"><div class="stat-label">Best Match</div><div class="stat-val amber" id="ov-match">0%</div></div>
+        </div>
+        <div class="rec-engine-wrap" id="rec-engine-section" style="display:none">
+          <div class="rec-engine-header">
+            <span style="font-size:1.3rem">🎯</span>
+            <h3>Personalized Recommendations</h3>
+            <span class="ai-badge">SMART MATCH</span>
+          </div>
+          <div id="rec-engine-cards"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.4rem">
+          <div class="section">
+            <div class="section-header"><h3>Top Matches For You</h3><button class="btn btn-ghost btn-sm" onclick="switchTab('internships',document.querySelector('[data-tab=internships]'))">View All →</button></div>
+            <div id="ov-top-matches"></div>
+          </div>
+          <div class="section">
+            <div class="section-header"><h3>Recent Applications</h3><button class="btn btn-ghost btn-sm" onclick="switchTab('applications',document.querySelector('[data-tab=applications]'))">View All →</button></div>
+            <div id="ov-recent-apps"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INTERNSHIPS TAB -->
+      <div class="dash-tab" id="tab-internships">
+        <div class="page-header"><h2>Internship Listings</h2><p>Ranked by match score based on your skills</p></div>
+        <div class="search-bar">
+          <input type="text" id="intern-search" placeholder="Search by role, company, skill..." oninput="renderInternships()">
+          <select id="intern-domain" onchange="renderInternships()">
+            <option value="">All Domains</option>
+            <option>Data Science</option><option>Web Development</option><option>Mobile Development</option>
+            <option>Machine Learning</option><option>Backend Development</option><option>Cloud & DevOps</option>
+            <option>Cybersecurity</option><option>UI/UX Design</option>
+          </select>
+          <select id="intern-location" onchange="renderInternships()">
+            <option value="">All Locations</option>
+            <option>Remote</option><option>Bangalore</option><option>Mumbai</option>
+            <option>Hyderabad</option><option>Pune</option><option>Chennai</option>
+          </select>
+          <label class="expiry-toggle" title="Show expired listings">
+            <div class="toggle-switch" id="show-expired-toggle" onclick="toggleExpiredFilter(this)"></div>
+            Show Expired
+          </label>
+          <span class="search-advanced-toggle" onclick="document.getElementById('adv-search-panel').classList.toggle('open')">⚙ Filters</span>
+        </div>
+        <div class="search-advanced-panel" id="adv-search-panel">
+          <div style="display:flex;gap:1.4rem;flex-wrap:wrap">
+            <div style="flex:1;min-width:160px">
+              <div style="font-size:0.77rem;color:var(--text3);margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:1px">Stipend Range</div>
+              <select id="filter-stipend" onchange="renderInternships()" style="width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:0.45rem 0.8rem;outline:none;font-family:'DM Sans',sans-serif;font-size:0.84rem">
+                <option value="">Any stipend</option>
+                <option value="unpaid">Unpaid</option>
+                <option value="low">Under ₹10,000</option>
+                <option value="mid">₹10,000–₹20,000</option>
+                <option value="high">₹20,000+</option>
+              </select>
+            </div>
+            <div style="flex:1;min-width:160px">
+              <div style="font-size:0.77rem;color:var(--text3);margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:1px">Match Score</div>
+              <select id="filter-match" onchange="renderInternships()" style="width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:0.45rem 0.8rem;outline:none;font-family:'DM Sans',sans-serif;font-size:0.84rem">
+                <option value="">Any match</option>
+                <option value="high">High (70%+)</option>
+                <option value="med">Medium (40–70%)</option>
+                <option value="low">Low (&lt;40%)</option>
+              </select>
+            </div>
+          </div>
+          <div style="margin-top:0.8rem">
+            <div style="font-size:0.77rem;color:var(--text3);margin-bottom:0.4rem;text-transform:uppercase;letter-spacing:1px">Quick Skill Filters</div>
+            <div class="filter-chips" id="quick-skill-chips"></div>
+          </div>
+        </div>
+        <div class="search-results-count" id="search-results-count"></div>
+        <div id="intern-loading" class="empty-state" style="display:none"><div class="spinner"></div></div>
+        <div class="internship-grid" id="internship-grid"></div>
+        <div class="empty-state" id="intern-empty" style="display:none">
+          <div class="icon">📭</div>
+          <h3>No internships yet</h3>
+          <p>Check back soon — the admin will post listings shortly</p>
+        </div>
+      </div>
+
+      <!-- SKILLS TAB -->
+      <div class="dash-tab" id="tab-skills">
+        <div class="page-header"><h2>My Skills</h2><p>Add your skills to get personalized internship matches</p></div>
+        <div class="section">
+          <div class="section-header"><h3>Add a Skill</h3></div>
+          <div style="display:grid;grid-template-columns:2fr 1fr auto;gap:0.8rem;align-items:end">
+            <div class="form-group" style="margin:0"><label>Skill Name</label><input type="text" id="new-skill-name" placeholder="e.g. Python, React, TensorFlow" onkeydown="if(event.key==='Enter')addSkill()"></div>
+            <div class="form-group" style="margin:0"><label>Category</label>
+              <select id="new-skill-cat">
+                <option>Programming</option><option>Web</option><option>Database</option>
+                <option>ML/AI</option><option>Cloud</option><option>Mobile</option><option>Design</option><option>Other</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" style="padding:0.72rem 1.4rem" onclick="addSkill()">+ Add</button>
+          </div>
+        </div>
+        <div class="section">
+          <div class="section-header"><h3>Skill Portfolio (<span id="skill-count">0</span>)</h3></div>
+          <div id="skills-list"></div>
+        </div>
+      </div>
+
+      <!-- APPLICATIONS TAB -->
+      <div class="dash-tab" id="tab-applications">
+        <div class="page-header"><h2>My Applications</h2><p>Track your internship application pipeline</p></div>
+        <div class="stats-row" style="grid-template-columns:repeat(4,1fr)">
+          <div class="stat-card"><div class="stat-label">Total Applied</div><div class="stat-val blue" id="app-total">0</div></div>
+          <div class="stat-card"><div class="stat-label">Under Review</div><div class="stat-val amber" id="app-review">0</div></div>
+          <div class="stat-card"><div class="stat-label">Selected</div><div class="stat-val green" id="app-selected">0</div></div>
+          <div class="stat-card"><div class="stat-label">Rejected</div><div class="stat-val" style="color:var(--danger)" id="app-rejected">0</div></div>
+        </div>
+        <div class="section">
+          <div class="section-header"><h3>Application History</h3></div>
+          <div class="table-wrap" id="applications-table"></div>
+        </div>
+      </div>
+
+      <!-- MY ANALYTICS TAB -->
+      <div class="dash-tab" id="tab-my-analytics">
+        <div class="page-header"><h2>My Analytics</h2><p>Your application performance and skill match insights</p></div>
+        <div class="analytics-grid" id="student-analytics-stats"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.4rem;margin-top:0">
+          <div class="section">
+            <div class="section-header"><h3>Application Status Breakdown</h3></div>
+            <div id="student-status-chart"></div>
+          </div>
+          <div class="section">
+            <div class="section-header"><h3>Skill Match Distribution</h3></div>
+            <div id="student-match-chart"></div>
+          </div>
+        </div>
+        <div class="rec-engine-wrap" style="margin-top:1.4rem">
+          <div class="rec-engine-header">
+            <span style="font-size:1.3rem">🎯</span>
+            <h3>Near-Miss Opportunities</h3>
+            <span class="ai-badge">SKILL ENGINE</span>
+          </div>
+          <p style="font-size:0.82rem;color:var(--text2);margin-bottom:1rem">Internships you're close to qualifying for — learn 1-2 more skills to unlock them.</p>
+          <div id="student-rec-cards"></div>
+        </div>
+      </div>
+
+      <!-- PROFILE TAB -->
+      <div class="dash-tab" id="tab-profile">
+        <div class="page-header"><h2>My Profile</h2><p>Keep your profile updated for better recommendations</p></div>
+        <div class="profile-grid">
+          <div class="section profile-avatar-section">
+            <div class="big-avatar" id="profile-avatar">RK</div>
+            <div id="profile-name-display" style="font-size:1.1rem;font-weight:600;margin-bottom:0.3rem"></div>
+            <div style="font-size:0.8rem;color:var(--text3);margin-bottom:1rem" id="profile-email-display"></div>
+            <span class="status-badge status-applied" id="profile-branch-display"></span>
+          </div>
+          <div class="section">
+            <div class="section-header"><h3>Edit Profile</h3></div>
+            <div class="grid2">
+              <div class="form-group"><label>First Name</label><input type="text" id="profile-fname"></div>
+              <div class="form-group"><label>Last Name</label><input type="text" id="profile-lname"></div>
+            </div>
+            <div class="form-group"><label>USN / Roll No</label><input type="text" id="profile-usn"></div>
+            <div class="form-group"><label>CGPA</label><input type="text" id="profile-cgpa" placeholder="e.g. 8.5"></div>
+            <div class="form-group"><label>Bio</label><textarea id="profile-bio" placeholder="Briefly describe yourself..."></textarea></div>
+            <div class="form-group"><label>LinkedIn</label><input type="text" id="profile-linkedin" placeholder="linkedin.com/in/yourname"></div>
+            <div class="form-group"><label>GitHub</label><input type="text" id="profile-github" placeholder="github.com/yourname"></div>
+            <button class="btn btn-primary" onclick="saveProfile()">Save Profile</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ============ ADMIN DASHBOARD ============ -->
+<div class="page" id="page-admin">
+  <div class="dash-layout">
+    <aside class="sidebar">
+      <div class="sidebar-logo"><div class="logo" style="font-size:1.25rem">Intern<span>IQ</span></div></div>
+      <div class="sidebar-user">
+        <div class="user-avatar" style="background:linear-gradient(135deg,var(--warn),#f59e0b)" id="admin-dash-avatar">A</div>
+        <div class="user-name" id="admin-dash-name">Administrator</div>
+        <div class="user-role" style="color:var(--warn)">Admin Access</div>
+      </div>
+      <nav class="nav-menu">
+        <div class="nav-item active" onclick="switchAdminTab('post',this)" data-tab="post"><span class="icon">➕</span> Post Internship</div>
+        <div class="nav-item" onclick="switchAdminTab('manage',this)" data-tab="manage"><span class="icon">📋</span> Manage Listings</div>
+        <div class="nav-item" onclick="switchAdminTab('students',this)" data-tab="students"><span class="icon">👥</span> Students</div>
+        <div class="nav-item" onclick="switchAdminTab('admin-applications',this)" data-tab="admin-applications"><span class="icon">📊</span> Applications</div>
+        <div class="nav-item" onclick="switchAdminTab('analytics',this)" data-tab="analytics"><span class="icon">📈</span> Analytics</div>
+        <div class="nav-item" onclick="switchAdminTab('audit',this)" data-tab="audit"><span class="icon">🗂️</span> Audit Log</div>
+      </nav>
+      <div class="sidebar-footer">
+        <button class="btn btn-danger btn-sm" style="width:100%" onclick="handleAdminLogout()">Sign Out</button>
+      </div>
+    </aside>
+    <main class="main-content">
+      <!-- POST INTERNSHIP -->
+      <div class="dash-tab active" id="tab-post">
+        <div class="page-header">
+          <h2>Post New Internship</h2>
+          <p>Add a verified internship listing for students to apply</p>
+        </div>
+
+        <!-- SUPABASE STATUS BANNER -->
+        <div id="supabase-banner" style="display:none;margin-bottom:1.4rem"></div>
+
+        <!-- JD PARSER -->
+        <div class="jd-parser-wrap">
+          <div class="jd-parser-toggle" id="jd-toggle" onclick="toggleJDParser()">
+            <div class="jd-ai-icon">✨</div>
+            <div class="jd-label">
+              <strong>Parse Job Description</strong>
+              <span>Paste any JD — it fills the form automatically in seconds</span>
+            </div>
+            <span class="jd-badge">SMART</span>
+            <span class="jd-chevron">▼</span>
+          </div>
+          <div class="jd-parser-body" id="jd-parser-body">
+            <div style="font-size:0.78rem;color:var(--text3);margin-bottom:0.6rem">Paste the full job description below — company, role, skills, stipend, duration and description will be extracted automatically.</div>
+            <textarea id="jd-raw-text" placeholder="e.g.
+We are hiring a Machine Learning Intern at Infosys, Bangalore.
+Duration: 3 months | Stipend: ₹18,000/month
+Required Skills: Python, TensorFlow, Scikit-learn, SQL, Pandas
+About the role: You will work with the team to build predictive models..."></textarea>
+            <div class="jd-parse-btn">
+              <button class="btn btn-primary" id="jd-parse-btn" onclick="parseJDWithAI()">✨ Extract & Fill Form</button>
+              <button class="btn btn-ghost btn-sm" onclick="clearJDParser()">Clear</button>
+              <span id="jd-parse-status" style="font-size:0.78rem;color:var(--text3);display:none"></span>
+            </div>
+            <div class="jd-parse-error" id="jd-parse-error"></div>
+            <div class="jd-parse-result" id="jd-parse-result">
+              <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem">
+                <span style="color:var(--success)">✓</span>
+                <strong style="color:var(--text);font-size:0.84rem">Form filled successfully!</strong>
+              </div>
+              <div style="color:var(--text3);font-size:0.77rem;margin-bottom:0.5rem">Fields extracted:</div>
+              <div class="jd-filled-fields" id="jd-filled-fields"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section" style="max-width:680px">
+          <div class="grid2">
+            <div class="form-group"><label>Company Name *</label><input type="text" id="ad-company" placeholder="e.g. Google, Infosys"></div>
+            <div class="form-group"><label>Role / Title *</label><input type="text" id="ad-role" placeholder="e.g. ML Engineer Intern"></div>
+          </div>
+          <div class="grid2">
+            <div class="form-group"><label>Domain *</label>
+              <select id="ad-domain">
+                <option value="">Select Domain</option>
+                <option>Data Science</option><option>Web Development</option><option>Mobile Development</option>
+                <option>Machine Learning</option><option>Backend Development</option><option>Cloud & DevOps</option>
+                <option>Cybersecurity</option><option>UI/UX Design</option>
+              </select>
+            </div>
+            <div class="form-group"><label>Location</label>
+              <select id="ad-location">
+                <option>Remote</option><option>Bangalore</option><option>Mumbai</option>
+                <option>Hyderabad</option><option>Pune</option><option>Chennai</option>
+              </select>
+            </div>
+          </div>
+          <div class="grid2">
+            <div class="form-group"><label>Duration</label><input type="text" id="ad-duration" placeholder="e.g. 3 months"></div>
+            <div class="form-group"><label>Stipend</label><input type="text" id="ad-stipend" placeholder="e.g. ₹15,000/month"></div>
+          </div>
+          <div class="form-group">
+            <label>Required Skills (comma-separated) *</label>
+            <input type="text" id="ad-skills" placeholder="Python, TensorFlow, SQL, Pandas">
+          </div>
+          <div class="form-group">
+            <label>Description *</label>
+            <textarea id="ad-desc" style="min-height:100px" placeholder="Describe the internship role, responsibilities, and any other details..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>Application Deadline</label>
+            <input type="date" id="ad-deadline">
+          </div>
+          <div class="form-error" id="err-post-general"></div>
+          <button class="btn btn-primary" id="post-btn" onclick="postInternship()" style="margin-top:0.5rem">🚀 Publish Internship</button>
+        </div>
+      </div>
+
+      <!-- MANAGE LISTINGS -->
+      <div class="dash-tab" id="tab-manage">
+        <div class="page-header"><h2>Manage Listings</h2><p>Edit or remove active internship postings</p></div>
+        <div id="manage-list"></div>
+      </div>
+
+      <!-- STUDENTS -->
+      <div class="dash-tab" id="tab-students">
+        <div class="page-header"><h2>Registered Students</h2><p>Overview of students on the platform</p></div>
+        <div class="section">
+          <div class="table-wrap" id="students-table"></div>
+        </div>
+      </div>
+
+      <!-- ALL APPLICATIONS -->
+      <div class="dash-tab" id="tab-admin-applications">
+        <div class="page-header" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:1rem">
+          <div>
+            <h2>All Applications</h2>
+            <p>Internships applied by students</p>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="renderAdminApps()" style="margin-top:0.3rem">🔄 Refresh</button>
+        </div>
+        <div class="section">
+          <div class="table-wrap" id="admin-apps-table"><div class="spinner"></div></div>
+        </div>
+      </div>
+
+      <!-- ANALYTICS TAB -->
+      <div class="dash-tab" id="tab-analytics">
+        <div class="page-header">
+          <h2>Application Analytics</h2>
+          <p>Real-time metrics and conversion insights for your listings</p>
+        </div>
+        <div class="analytics-grid" id="analytics-stats"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.4rem">
+          <div class="section">
+            <div class="section-header"><h3>Applications by Status</h3></div>
+            <div id="analytics-status-chart"></div>
+          </div>
+          <div class="section">
+            <div class="section-header"><h3>Top Listings by Applications</h3></div>
+            <div id="analytics-listings-chart"></div>
+          </div>
+        </div>
+        <div class="section" style="margin-top:1.4rem">
+          <div class="section-header"><h3>Conversion Funnel</h3></div>
+          <div id="analytics-funnel"></div>
+        </div>
+      </div>
+
+      <!-- AUDIT LOG TAB -->
+      <div class="dash-tab" id="tab-audit">
+        <div class="page-header">
+          <h2>Audit Log</h2>
+          <p>Full history of status changes, new listings, and actions</p>
+        </div>
+        <div class="section">
+          <div class="audit-filter-bar">
+            <button class="audit-filter-btn active" onclick="filterAudit('all',this)">All Events</button>
+            <button class="audit-filter-btn" onclick="filterAudit('status',this)">Status Changes</button>
+            <button class="audit-filter-btn" onclick="filterAudit('post',this)">New Listings</button>
+            <button class="audit-filter-btn" onclick="filterAudit('apply',this)">Applications</button>
+            <button class="audit-filter-btn" onclick="filterAudit('delete',this)">Deletions</button>
+          </div>
+          <div id="audit-log-container"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- INTERNSHIP DETAIL MODAL -->
+<div class="modal-overlay" id="modal-intern">
+  <div class="modal" id="modal-intern-content">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.5rem">
+      <h3 id="modal-title">Internship Details</h3>
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('modal-intern')">✕</button>
+    </div>
+    <div id="modal-body"></div>
+    <div class="modal-footer" id="modal-actions"></div>
+  </div>
+</div>
+
+<script>
+// =========================================================
+// SUPABASE SETUP
+// =========================================================
+// ┌─────────────────────────────────────────────────────────┐
+// │  REQUIRED SUPABASE SQL — run once in your SQL editor    │
+// │                                                         │
+// │  CREATE TABLE IF NOT EXISTS profiles (                  │
+// │    id uuid PRIMARY KEY REFERENCES auth.users,           │
+// │    first_name text, last_name text,                     │
+// │    usn text, branch text, sem text,                     │
+// │    email text, cgpa text, bio text,                     │
+// │    linkedin text, github text,                          │
+// │    skills jsonb DEFAULT '[]'::jsonb,                    │
+// │    created_at timestamptz DEFAULT now()                 │
+// │  );                                                     │
+// │                                                         │
+// │  CREATE TABLE IF NOT EXISTS admins (                    │
+// │    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),       │
+// │    email text UNIQUE NOT NULL,                          │
+// │    password text NOT NULL,  -- SHA-256 hex hash        │
+// │    name text,                                           │
+// │    created_at timestamptz DEFAULT now()                 │
+// │  );                                                     │
+// │                                                         │
+// │  CREATE TABLE IF NOT EXISTS internships (               │
+// │    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),       │
+// │    admin_id uuid REFERENCES admins(id) ON DELETE CASCADE,│
+// │    company text, role text, title text, domain text,    │
+// │    location text, duration text, stipend text,          │
+// │    skills_required text[], description text,            │
+// │    deadline text,                                       │
+// │    created_at timestamptz DEFAULT now()                 │
+// │  );                                                     │
+// │                                                         │
+// │  CREATE TABLE IF NOT EXISTS applications (              │
+// │    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),       │
+// │    user_id uuid, intern_id uuid,                        │
+// │    admin_id uuid REFERENCES admins(id),                 │
+// │    user_name text, user_email text,                     │
+// │    status text DEFAULT 'Applied',                       │
+// │    date text,                                           │
+// │    created_at timestamptz DEFAULT now()                 │
+// │  );                                                     │
+// │                                                         │
+// │  -- Optional: audit_log table for persistent audit      │
+// │  CREATE TABLE IF NOT EXISTS audit_log (                 │
+// │    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),       │
+// │    admin_id uuid, type text, action text,               │
+// │    detail text, target text,                            │
+// │    from_val text, to_val text,                          │
+// │    created_at timestamptz DEFAULT now()                 │
+// │  );                                                     │
+// └─────────────────────────────────────────────────────────┘
+
+// Replace with your actual Supabase URL and anon key
+const SUPABASE_URL = 'https://skcvagcmknpxqfnfogod.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNrY3ZhZ2Nta25weHFmbmZvZ29kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc2MDAyOTcsImV4cCI6MjA5MzE3NjI5N30.xB51TU7BuRo6v7gcCdnLf-aakwCVmBAop65YpKxG_3Y';
+
+let sbClient = null;
+let useLocalFallback = false;
+let supabaseReady = false;
+
+function initSupabase() {
+  try {
+    if (window.supabase && window.supabase.createClient) {
+      sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+        auth: { persistSession: true, autoRefreshToken: true }
+      });
+      supabaseReady = true;
+    } else {
+      console.warn('Supabase JS not loaded — using localStorage fallback');
+      useLocalFallback = true;
+    }
+  } catch(e) {
+    console.error('Supabase init error:', e);
+    useLocalFallback = true;
+  }
+}
+
+// =========================================================
+// LOCAL DB FALLBACK (when Supabase not configured)
+// =========================================================
+const LOCAL = {
+  get: (k) => { try { return JSON.parse(localStorage.getItem(k)); } catch(e){ return null; } },
+  set: (k, v) => localStorage.setItem(k, JSON.stringify(v)),
+  uid: () => {
+    // RFC-4122 UUID v4 — required by Supabase uuid columns
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+      const r = Math.random() * 16 | 0;
+      return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+    });
+  }
+};
+
+// Check if Supabase is properly configured AND client initialized
+function isSupabaseConfigured() {
+  return supabaseReady && sbClient !== null &&
+    SUPABASE_URL !== 'https://YOUR_PROJECT.supabase.co' &&
+    SUPABASE_ANON_KEY !== 'YOUR_ANON_KEY';
+}
+
+// =========================================================
+// GLOBAL STATE
+// =========================================================
+let currentUser = null;
+let currentAdminUser = null;
+let isAdmin = false;
+let cachedInternships = [];
+
+// =========================================================
+// via Supabase Edge Function proxy (no client-side key needed)
+// =========================================================
+async function callAI(prompt, max_tokens = 800) {
+  const res = await fetch(`${SUPABASE_URL}/functions/v1/ai-proxy`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${SUPABASE_ANON_KEY}`
+    },
+    body: JSON.stringify({ prompt, max_tokens })
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || `AI proxy error ${res.status}`);
+  }
+  const data = await res.json();
+  return data.text; // plain string response
+}
+
+// =========================================================
+// PAGE NAVIGATION
+// =========================================================
+function showPage(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(pageId).classList.add('active');
+  // Force immediate scroll to very top — belt + suspenders
+  window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
+}
+
+function switchTab(tabName, el) {
+  document.querySelectorAll('#page-dashboard .dash-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('#page-dashboard .nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('tab-' + tabName).classList.add('active');
+  if (el) el.classList.add('active');
+  if (tabName === 'internships') renderInternships();
+  if (tabName === 'applications') renderApplications();
+  if (tabName === 'skills') renderSkills();
+  if (tabName === 'overview') renderOverview();
+  if (tabName === 'my-analytics') renderStudentAnalytics();
+  if (tabName === 'profile') loadProfile();
+}
+
+function renderSupabaseBanner() {
+  const banner = el('supabase-banner');
+  if (!banner) return;
+
+  if (isSupabaseConfigured()) {
+    banner.style.display = 'block';
+    banner.innerHTML = `<div style="display:flex;align-items:center;gap:0.8rem;background:rgba(52,211,153,0.07);border:1px solid rgba(52,211,153,0.25);border-radius:10px;padding:0.85rem 1.2rem">
+      <span style="font-size:1.1rem">🟢</span>
+      <div>
+        <div style="font-size:0.85rem;font-weight:600;color:var(--success)">Supabase Connected</div>
+        <div style="font-size:0.76rem;color:var(--text3);margin-top:1px">${SUPABASE_URL.replace('https://','').split('.')[0]} · Real-time database active · Admin data is isolated per account</div>
+      </div>
+    </div>`;
+  } else {
+    banner.style.display = 'block';
+    banner.innerHTML = `<div style="display:flex;align-items:flex-start;gap:0.8rem;background:rgba(251,191,36,0.07);border:1px solid rgba(251,191,36,0.25);border-radius:10px;padding:0.85rem 1.2rem">
+      <span style="font-size:1.1rem">🟡</span>
+      <div style="flex:1">
+        <div style="font-size:0.85rem;font-weight:600;color:var(--warn)">Using Local Storage (Supabase not configured)</div>
+        <div style="font-size:0.76rem;color:var(--text3);margin-top:2px;line-height:1.6">
+          To connect Supabase: replace <code style="background:var(--bg2);padding:0.1rem 0.4rem;border-radius:4px;font-size:0.74rem">SUPABASE_URL</code> and <code style="background:var(--bg2);padding:0.1rem 0.4rem;border-radius:4px;font-size:0.74rem">SUPABASE_ANON_KEY</code> in the script, then create the 4 tables (profiles, admins, internships, applications) as shown in the SQL schema comment at the top of the script.
+        </div>
+      </div>
+    </div>`;
+  }
+}
+
+function switchAdminTab(tabName, el) {
+  document.querySelectorAll('#page-admin .dash-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('#page-admin .nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('tab-' + tabName).classList.add('active');
+  if (el) el.classList.add('active');
+  if (tabName === 'post') renderSupabaseBanner();
+  if (tabName === 'manage') renderManageListings();
+  if (tabName === 'students') renderStudentsTable();
+  if (tabName === 'admin-applications') renderAdminApps();
+  if (tabName === 'analytics') renderAnalytics();
+  if (tabName === 'audit') renderAuditLog();
+}
+
+// =========================================================
+// AUTH FUNCTIONS
+// =========================================================
+async function handleLogin() {
+  const email = v('login-email'), pw = v('login-password');
+  clearErrors();
+  if (!email) { showErr('err-login-email'); return; }
+  if (!pw) { showErr('err-login-pw'); return; }
+  const btn = el('login-btn');
+  btn.disabled = true; btn.textContent = 'Signing in...';
+  try {
+    if (isSupabaseConfigured()) {
+      const { data, error } = await sbClient.auth.signInWithPassword({ email, password: pw });
+      if (error) throw error;
+      // Fetch profile
+      const { data: profile } = await sbClient.from('profiles').select('*').eq('id', data.user.id).single();
+      currentUser = {
+        id: data.user.id, email,
+        ...(profile || {}),
+        name: profile ? (profile.first_name + ' ' + profile.last_name) : email.split('@')[0]
+      };
+    } else {
+      // Local fallback
+      const users = LOCAL.get('users') || [];
+      const user = users.find(u => u.email === email && u.password === pw);
+      if (!user) throw new Error('Invalid email or password');
+      currentUser = user;
+      LOCAL.set('currentUser', user);
+    }
+    initDashboard();
+    showPage('page-dashboard');
+    notify('Welcome back, ' + (currentUser.name || email).split(' ')[0] + '! 👋', 'success');
+  } catch (e) {
+    el('err-login-general').textContent = e.message || 'Login failed. Please try again.';
+    el('err-login-general').classList.add('show');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Sign In';
+  }
+}
+
+async function handleRegister() {
+  const fname = v('reg-fname'), lname = v('reg-lname'), email = v('reg-email'),
+        usn = v('reg-usn'), branch = v('reg-branch'), sem = v('reg-sem'), pw = v('reg-password');
+  clearErrors();
+  if (!fname || !lname || !email || !pw) {
+    el('err-reg-general').textContent = 'Please fill all required fields';
+    el('err-reg-general').classList.add('show'); return;
+  }
+  if (pw.length < 6) {
+    el('err-reg-general').textContent = 'Password must be at least 6 characters';
+    el('err-reg-general').classList.add('show'); return;
+  }
+  const btn = el('register-btn');
+  btn.disabled = true; btn.textContent = 'Creating account...';
+  try {
+    if (isSupabaseConfigured()) {
+      // Sign up without email confirmation (disabled in Supabase dashboard)
+      const { data, error } = await sbClient.auth.signUp({
+        email, password: pw,
+        options: { data: { first_name: fname, last_name: lname } }
+      });
+      if (error) throw error;
+      const uid = data.user.id;
+      // Insert profile — works whether email confirm is on or off
+      const { error: profErr } = await sbClient.from('profiles').upsert({
+        id: uid, first_name: fname, last_name: lname,
+        usn, branch, sem, email, created_at: new Date().toISOString()
+      }, { onConflict: 'id' });
+      if (profErr) console.warn('Profile insert warning:', profErr.message);
+      currentUser = { id: uid, email, name: fname + ' ' + lname, fname, lname, usn, branch, sem };
+    } else {
+      const users = LOCAL.get('users') || [];
+      if (users.find(u => u.email === email)) throw new Error('Email already registered');
+      const newUser = { id: LOCAL.uid(), email, password: pw, name: fname + ' ' + lname, fname, lname, usn, branch, sem, created: new Date().toISOString() };
+      users.push(newUser);
+      LOCAL.set('users', users);
+      LOCAL.set('currentUser', newUser);
+      currentUser = newUser;
+    }
+    initDashboard();
+    showPage('page-dashboard');
+    notify('Account created! Welcome to InternIQ 🎉', 'success');
+  } catch (e) {
+    el('err-reg-general').textContent = e.message || 'Registration failed. Try again.';
+    el('err-reg-general').classList.add('show');
+  } finally {
+    btn.disabled = false; btn.textContent = 'Create Account';
+  }
+}
+
+async function handleAdminLogin() {
+  const email = v('admin-email'), pw = v('admin-password');
+  clearErrors();
+  if (!email || !pw) {
+    el('err-admin-general').textContent = 'Please enter email and password';
+    el('err-admin-general').classList.add('show'); return;
+  }
+
+  // Hash the input — compare hashes, never plaintext
+  const pwHash = await hashPassword(pw);
+  let admin = null;
+
+  if (isSupabaseConfigured()) {
+    // Fetch by email, then verify hash in JS
+    const { data, error } = await sbClient
+      .from('admins')
+      .select('*')
+      .eq('email', email)
+      .maybeSingle();
+    if (error) { el('err-admin-general').textContent = 'Error: ' + error.message; el('err-admin-general').classList.add('show'); return; }
+    if (data) {
+      // Support both hashed passwords (new) and plaintext legacy passwords
+      const matchesHash = (data.password === pwHash);
+      const matchesPlain = (data.password === pw);  // legacy accounts before hashing was added
+      if (matchesHash || matchesPlain) {
+        // Auto-migrate plaintext → hash on successful login
+        if (matchesPlain && !matchesHash) {
+          await sbClient.from('admins').update({ password: pwHash }).eq('id', data.id);
+          console.log('Admin password auto-migrated to SHA-256 hash.');
+        }
+        admin = data;
+        const admins = LOCAL.get('admins') || [];
+        if (!admins.find(a => a.id === admin.id)) { admins.push(admin); LOCAL.set('admins', admins); }
+      }
+    }
+  } else {
+    const admins = LOCAL.get('admins') || [];
+    if (!admins.length) {
+      const seedHash = await hashPassword('admin123');
+      const seed = { id: LOCAL.uid(), email: 'admin@interniq.io', password: seedHash, name: 'Default Admin', created_at: new Date().toISOString() };
+      admins.push(seed);
+      LOCAL.set('admins', admins);
+    }
+    // Support plaintext (legacy) and hash (new) for localStorage mode
+    admin = admins.find(a => a.email === email && (a.password === pwHash || a.password === pw)) || null;
+    // Auto-migrate plaintext to hash in localStorage
+    if (admin && admin.password === pw && admin.password !== pwHash) {
+      admin.password = pwHash;
+      LOCAL.set('admins', admins);
+    }
+  }
+
+  if (admin) {
+    isAdmin = true;
+    currentAdminUser = admin;
+    LOCAL.set('adminSession', { id: admin.id, email: admin.email, name: admin.name });
+    el('admin-dash-name').textContent = admin.name || admin.email.split('@')[0];
+    const initials = (admin.name || admin.email).split(' ').map(w=>w[0]).join('').toUpperCase().substr(0,2);
+    el('admin-dash-avatar').textContent = initials;
+    showPage('page-admin');
+    switchAdminTab('post', document.querySelector('#page-admin [data-tab="post"]'));
+    notify('Welcome back, ' + (admin.name || 'Admin') + '! ⚙️', 'success');
+  } else {
+    el('err-admin-general').textContent = 'Invalid email or password';
+    el('err-admin-general').classList.add('show');
+  }
+}
+
+// ── Password hashing — SHA-256 via Web Crypto (no library, works in every browser)
+// Passwords are NEVER stored or compared in plaintext.
+// On register: hash(pw) → DB.  On login: hash(input) === stored_hash.
+async function hashPassword(plaintext) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(plaintext));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+async function handleAdminRegister() {
+  const name = v('admin-reg-name'), email = v('admin-reg-email'), pw = v('admin-reg-pw'), code = v('admin-reg-code');
+  clearErrors();
+  const ACCESS_CODE = 'INTERNIQ2025';
+  if (!name || !email || !pw) { el('err-admin-reg').textContent = 'Fill all fields'; el('err-admin-reg').classList.add('show'); return; }
+  if (code !== ACCESS_CODE) { el('err-admin-reg').textContent = 'Invalid admin access code'; el('err-admin-reg').classList.add('show'); return; }
+  if (pw.length < 6) { el('err-admin-reg').textContent = 'Password must be at least 6 characters'; el('err-admin-reg').classList.add('show'); return; }
+
+  const pwHash = await hashPassword(pw);  // hash before any storage write
+
+  if (isSupabaseConfigured()) {
+    const { data: existing } = await sbClient.from('admins').select('id').eq('email', email).maybeSingle();
+    if (existing) { el('err-admin-reg').textContent = 'Email already registered as admin'; el('err-admin-reg').classList.add('show'); return; }
+    // Store the hash — never the plaintext
+    const { data, error } = await sbClient.from('admins').insert({ email, password: pwHash, name }).select().single();
+    if (error) { el('err-admin-reg').textContent = 'Error: ' + error.message; el('err-admin-reg').classList.add('show'); return; }
+    const admins = LOCAL.get('admins') || [];
+    admins.push(data);
+    LOCAL.set('admins', admins);
+  } else {
+    const admins = LOCAL.get('admins') || [];
+    if (admins.find(a => a.email === email)) { el('err-admin-reg').textContent = 'Email already registered as admin'; el('err-admin-reg').classList.add('show'); return; }
+    const newAdmin = { id: LOCAL.uid(), email, password: pwHash, name, created_at: new Date().toISOString() };
+    admins.push(newAdmin);
+    LOCAL.set('admins', admins);
+  }
+
+  notify('Admin account created! You can now sign in.', 'success');
+  toggleAdminRegForm(false);
+}
+
+function handleLogout() {
+  if (currentUser) {
+    LOCAL.set("apps_" + currentUser.id, null);
+    LOCAL.set("skills_" + currentUser.id, null);
+  }
+  if (isSupabaseConfigured()) sbClient.auth.signOut();
+  currentUser = null;
+  LOCAL.set("currentUser", null);
+  showPage("page-landing");
+  notify("Signed out successfully", "success");
+}
+
+function handleAdminLogout() {
+  isAdmin = false;
+  currentAdminUser = null;
+  LOCAL.set('adminSession', null);
+  showPage('page-landing');
+  notify('Signed out', 'success');
+}
+
+// =========================================================
+// DATA LAYER — works with Supabase OR localStorage fallback
+// =========================================================
+// getInternships(adminOnly): if adminOnly=true, only fetch internships posted by the current admin
+async function getInternships(adminOnly = false) {
+  if (isSupabaseConfigured()) {
+    let query = sbClient.from('internships').select('*').order('created_at', { ascending: false });
+    if (adminOnly && currentAdminUser) {
+      const adminId = currentAdminUser.id;
+      const isValidUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(adminId);
+      if (isValidUUID) query = query.eq('admin_id', adminId);
+    }
+    try {
+      const { data, error } = await query;
+      if (error) throw error;
+      return data || [];
+    } catch(e) {
+      console.error('getInternships error:', e.message);
+      notify('Failed to load internships: ' + e.message, 'error');
+      return [];
+    }
+  }
+  // localStorage fallback — filter by admin_id when in admin context
+  const all = LOCAL.get('internships') || [];
+  if (adminOnly && currentAdminUser) {
+    return all.filter(i => i.admin_id === currentAdminUser.id);
+  }
+  return all;
+}
+
+async function saveInternship(intern) {
+  // Tag with current admin's id for isolation
+  const adminId = currentAdminUser ? currentAdminUser.id : null;
+
+  if (isSupabaseConfigured()) {
+    // Only include admin_id if it looks like a valid UUID (Supabase rejects non-UUID strings)
+    const isValidUUID = adminId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(adminId);
+    const payload = { ...intern };
+    if (isValidUUID) payload.admin_id = adminId;
+    const { data, error } = await sbClient.from('internships').insert(payload).select().single();
+    if (error) throw error;
+    return data;
+  } else {
+    const list = LOCAL.get('internships') || [];
+    const newItem = { ...intern, admin_id: adminId, id: LOCAL.uid(), created_at: new Date().toISOString() };
+    list.unshift(newItem);
+    LOCAL.set('internships', list);
+    return newItem;
+  }
+}
+
+async function deleteInternship(id) {
+  if (isSupabaseConfigured()) {
+    await sbClient.from('internships').delete().eq('id', id);
+  } else {
+    const list = (LOCAL.get('internships') || []).filter(i => i.id !== id);
+    LOCAL.set('internships', list);
+  }
+}
+
+async function updateInternship(id, updates) {
+  if (isSupabaseConfigured()) {
+    const { error } = await sbClient.from('internships').update(updates).eq('id', id);
+    if (error) throw error;
+  } else {
+    const list = LOCAL.get('internships') || [];
+    const idx = list.findIndex(i => i.id === id);
+    if (idx !== -1) { list[idx] = { ...list[idx], ...updates }; LOCAL.set('internships', list); }
+  }
+}
+
+// ── Skills: always read from localStorage cache first (fast),
+//    then persist to Supabase profiles.skills column (jsonb) in the background.
+async function getSkills() {
+  if (!currentUser) return [];
+  // 1. Try to load from Supabase skills table on first fetch and warm the cache
+  if (isSupabaseConfigured() && !currentUser._skillsLoaded) {
+    try {
+      const { data, error } = await sbClient
+        .from('skills')
+        .select('*')
+        .eq('user_id', currentUser.id);
+      if (!error && data) {
+        LOCAL.set('skills_' + currentUser.id, data);
+        currentUser._skillsLoaded = true;
+      }
+    } catch(e) { /* fall through to localStorage */ }
+  }
+  return LOCAL.get('skills_' + currentUser.id) || [];
+}
+
+async function saveSkills(skills) {
+  if (!currentUser) return;
+  // Always write locally first (instant feedback)
+  LOCAL.set('skills_' + currentUser.id, skills);
+  // Persist to Supabase skills table
+  if (isSupabaseConfigured()) {
+    try {
+      // Delete all existing skills for this user, then re-insert
+      const { error: delError } = await sbClient
+        .from('skills')
+        .delete()
+        .eq('user_id', currentUser.id);
+      if (delError) { console.warn('saveSkills delete error:', delError.message); return; }
+      if (skills.length > 0) {
+        const rows = skills.map(s => ({ id: s.id, user_id: currentUser.id, name: s.name, cat: s.cat || 'Other' }));
+        const { error: insError } = await sbClient.from('skills').insert(rows);
+        if (insError) console.warn('saveSkills insert error:', insError.message);
+      }
+    } catch(e) { console.warn('saveSkills error:', e); }
+  }
+}
+
+async function getApplications() {
+  if (!currentUser) return [];
+  if (isSupabaseConfigured()) {
+    // Use local cache if available (kept in sync by applyInternship/withdrawApp)
+    const cached = LOCAL.get('apps_' + currentUser.id);
+    if (cached) return cached;
+    // First load: fetch from Supabase and populate cache
+    try {
+      const { data, error } = await sbClient
+        .from('applications')
+        .select('*')
+        .eq('user_id', currentUser.id)
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      const apps = (data || []).map(a => ({
+        id: a.id,
+        internId: a.intern_id,
+        adminId: a.admin_id,
+        userId: a.user_id,
+        userName: a.user_name,
+        userEmail: a.user_email,
+        status: a.status || 'Applied',
+        date: a.date || new Date(a.created_at).toLocaleDateString()
+      }));
+      LOCAL.set('apps_' + currentUser.id, apps);
+      return apps;
+    } catch(e) {
+      console.warn('getApplications Supabase error:', e.message);
+      return [];
+    }
+  }
+  return LOCAL.get('apps_' + currentUser.id) || [];
+}
+
+function saveApplications(apps) {
+  if (!currentUser) return;
+  LOCAL.set('apps_' + currentUser.id, apps);
+}
+
+async function getAllStudents() {
+  if (isSupabaseConfigured()) {
+    try {
+      const { data, error } = await sbClient.from('profiles').select('*').order('created_at', { ascending: false });
+      if (error) throw error;
+      return (data || []).map(u => ({
+        id: u.id,
+        name: ((u.first_name || '') + ' ' + (u.last_name || '')).trim() || '-',
+        email: u.email || '-',
+        usn: u.usn || '-',
+        branch: u.branch || '-',
+        sem: u.sem || '-',
+        created: u.created_at || '-'
+      }));
+    } catch(e) {
+      console.error('getAllStudents error:', e.message);
+      notify('Failed to load students: ' + e.message, 'error');
+      return [];
+    }
+  }
+  return LOCAL.get('users') || [];
+}
+
+function getAllApplications() {
+  // Primary: read from global all_applications list (written on every apply)
+  const global = LOCAL.get('all_applications') || [];
+  if (global.length) return global;
+
+  // Fallback: scan per-user apps_* keys for backward compatibility
+  const users = LOCAL.get('users') || [];
+  const userMap = {};
+  users.forEach(u => { userMap[u.id] = { name: u.name, email: u.email }; });
+  const result = [];
+  for (let k of Object.keys(localStorage)) {
+    if (k.startsWith('apps_')) {
+      const uid = k.replace('apps_', '');
+      let apps = [];
+      try { apps = JSON.parse(localStorage.getItem(k)) || []; } catch(e) {}
+      const info = userMap[uid] || {};
+      apps.forEach(a => result.push({
+        ...a,
+        userName: a.userName || info.name || ('Student #' + uid.slice(-4)),
+        userEmail: a.userEmail || info.email || '-'
+      }));
+    }
+  }
+  return result;
+}
+
+// =========================================================
+// MATCH SCORING
+// =========================================================
+function calcMatch(internship, skills) {
+  const skillNames = (skills || []).map(s => typeof s === 'string' ? s.toLowerCase() : (s.name || '').toLowerCase()).filter(Boolean);
+  const required = (internship.skills_required || internship.skills || []).map(s => (typeof s === 'string' ? s : s.name || '').toLowerCase()).filter(Boolean);
+  if (!required.length || !skillNames.length) return 0;
+  const matched = required.filter(r => skillNames.some(s => s.includes(r) || r.includes(s)));
+  return Math.round((matched.length / required.length) * 100);
+}
+
+function getMatchedSkills(internship, skills) {
+  const skillNames = (skills || []).map(s => typeof s === 'string' ? s.toLowerCase() : (s.name || '').toLowerCase()).filter(Boolean);
+  const required = (internship.skills_required || internship.skills || []).map(s => (typeof s === 'string' ? s : s.name || '').toLowerCase()).filter(Boolean);
+  return required.filter(r => skillNames.some(s => s.includes(r) || r.includes(s)));
+}
+
+function getMissingSkills(internship, skills) {
+  const skillNames = (skills || []).map(s => typeof s === 'string' ? s.toLowerCase() : (s.name || '').toLowerCase()).filter(Boolean);
+  const required = (internship.skills_required || internship.skills || []).map(s => (typeof s === 'string' ? s : s.name || '').toLowerCase()).filter(Boolean);
+  return required.filter(r => !skillNames.some(s => s.includes(r) || r.includes(s)));
+}
+
+// =========================================================
+// SKILL SUGGESTIONS via Claude API
+// =========================================================
+async function getAISuggestions(internship, missingSkills) {
+  try {
+    const prompt = `A student wants to apply for this internship:
+Role: ${internship.role || internship.title}
+Company: ${internship.company}
+Domain: ${internship.domain}
+Required skills: ${(internship.skills_required || internship.skills || []).join(', ')}
+Skills the student is missing: ${missingSkills.join(', ')}
+
+Give exactly 5 specific, actionable learning recommendations as a JSON array of objects with fields: skill (string), resource (specific course/book/project with URL if possible), priority (high/medium/low), timeEstimate (e.g. "2 weeks", "1 month").
+Order by priority descending. Return ONLY the valid JSON array, no markdown, no preamble.`;
+
+    // AI removed — return empty so fallback triggers
+    throw new Error('AI suggestions not available');
+  } catch (e) {
+    // Fallback suggestions
+    return missingSkills.slice(0, 5).map(s => ({
+      skill: s,
+      resource: `Search for "${s} tutorial" on YouTube or Coursera`,
+      priority: 'high'
+    }));
+  }
+}
+
+// =========================================================
+// JD PARSER — Admin: paste JD → auto-fill the post form
+// =========================================================
+
+function toggleJDParser() {
+  const toggle = el('jd-toggle');
+  const body   = el('jd-parser-body');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  toggle.classList.toggle('open', !isOpen);
+}
+
+function clearJDParser() {
+  el('jd-raw-text').value = '';
+  el('jd-parse-result').classList.remove('show');
+  el('jd-parse-error').classList.remove('show');
+  el('jd-parse-status').style.display = 'none';
+}
+
+function parseJDWithAI() {
+  const raw = (el('jd-raw-text').value || '').trim();
+  if (!raw) { notify('Please paste a job description first', 'error'); return; }
+
+  const btn    = el('jd-parse-btn');
+  const errBox = el('jd-parse-error');
+  const resBox = el('jd-parse-result');
+  const status = el('jd-parse-status');
+
+  btn.disabled = true;
+  btn.textContent = '\u23f3 Parsing...';
+  status.style.display = 'inline';
+  status.textContent = 'Scanning job description...';
+  errBox.classList.remove('show');
+  resBox.classList.remove('show');
+
+  try {
+    const parsed = extractFromJD(raw);
+    const filled = [];
+
+    if (parsed.company)     { el('ad-company').value  = parsed.company;     filled.push('Company'); }
+    if (parsed.role)        { el('ad-role').value     = parsed.role;        filled.push('Role'); }
+    if (parsed.duration)    { el('ad-duration').value = parsed.duration;    filled.push('Duration'); }
+    if (parsed.stipend)     { el('ad-stipend').value  = parsed.stipend;     filled.push('Stipend'); }
+    if (parsed.description) { el('ad-desc').value     = parsed.description; filled.push('Description'); }
+
+    if (parsed.skills && parsed.skills.length) {
+      el('ad-skills').value = parsed.skills.join(', ');
+      filled.push('Skills (' + parsed.skills.length + ')');
+    }
+
+    if (parsed.domain) {
+      const domainEl = el('ad-domain');
+      const opts = Array.from(domainEl.options).map(o => o.value);
+      const match = opts.find(o => o.toLowerCase() === parsed.domain.toLowerCase()) ||
+                    opts.find(o => o.toLowerCase().includes(parsed.domain.toLowerCase().split(' ')[0]));
+      if (match) { domainEl.value = match; filled.push('Domain'); }
+    }
+
+    if (parsed.location) {
+      const locEl = el('ad-location');
+      const opts = Array.from(locEl.options).map(o => o.value);
+      const match = opts.find(o => o.toLowerCase() === parsed.location.toLowerCase()) ||
+                    opts.find(o => o.toLowerCase().includes(parsed.location.toLowerCase()));
+      if (match) { locEl.value = match; filled.push('Location'); }
+    }
+
+    if (filled.length === 0) {
+      errBox.textContent = 'Could not extract any fields \u2014 make sure the JD includes company name, role, skills etc.';
+      errBox.classList.add('show');
+    } else {
+      el('jd-filled-fields').innerHTML = filled.map(f => '<span class="jd-filled-tag">\u2713 ' + f + '</span>').join('');
+      resBox.classList.add('show');
+      setTimeout(() => el('ad-company').scrollIntoView({ behavior: 'smooth', block: 'center' }), 200);
+      notify('Extracted ' + filled.length + ' fields! Review and publish.', 'success');
+    }
+  } catch (e) {
+    errBox.textContent = 'Parse error: ' + e.message;
+    errBox.classList.add('show');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '\u2728 Extract & Fill Form';
+    status.style.display = 'none';
+  }
+}
+
+function extractFromJD(text) {
+  const t = text;
+  const lower = t.toLowerCase();
+  const lines = t.split('\n').map(l => l.trim()).filter(Boolean);
+
+  // COMPANY
+  let company = '';
+  const companyPatterns = [
+    /(?:company|organization|employer|firm|institute)[:\s]+([A-Za-z0-9][A-Za-z0-9\s&.,'-]{2,40}?)(?:\s*[,.|!\n]|$)/im,
+    /(?:at|@|with|for)\s+([A-Z][A-Za-z0-9\s&.,'-]{2,40}?)(?:\s*[,.|!\n]|$)/m,
+    /^([A-Z][A-Za-z0-9\s&.'-]{2,35}?)\s+(?:is hiring|is looking|is seeking|invites)/m,
+    /hiring\s+(?:at|for|with)\s+([A-Z][A-Za-z0-9\s&.'-]{2,35})/im,
+  ];
+  for (const p of companyPatterns) {
+    const m = t.match(p);
+    if (m) { company = m[1].trim(); break; }
+  }
+
+  // ROLE
+  let role = '';
+  const rolePatterns = [
+    /(?:role|position|title|hiring|opening)[:\s]+([A-Za-z\s\/&-]{4,60}?)(?:\n|at |@|\.|,|$)/im,
+    /(?:for\s+(?:the\s+)?(?:role|position)\s+of\s+)([A-Za-z\s\/&-]{4,60}?)(?:\n|\.|,|$)/im,
+    /^([A-Za-z\s\/&-]{4,60}?(?:intern(?:ship)?|engineer|developer|analyst|designer|manager)[A-Za-z\s\/&-]{0,30})$/im,
+  ];
+  for (const p of rolePatterns) {
+    const m = t.match(p);
+    if (m) { role = m[1].trim().replace(/\s+/g, ' '); break; }
+  }
+  if (!role) {
+    const internLine = lines.find(l => /intern/i.test(l) && l.length < 80);
+    if (internLine) role = internLine.replace(/^(we are hiring|hiring|opening|role:|position:)/i, '').trim();
+  }
+
+  // DURATION
+  let duration = '';
+  const durMatch = t.match(/(?:duration|period|tenure|length)[:\s-]+([0-9]+\s*(?:month|week|year)s?(?:\s*[-\u2013]\s*[0-9]+\s*(?:month|week|year)s?)?)/i)
+    || t.match(/([0-9]+\s*(?:month|week|year)s?)\s*(?:internship|duration|period|contract)/i)
+    || t.match(/(\d+[-\u2013]\d+\s*months?)/i)
+    || t.match(/(\d+\s*months?)/i);
+  if (durMatch) duration = durMatch[1].trim();
+
+  // STIPEND
+  let stipend = '';
+  const stipMatch = t.match(/(?:stipend|salary|pay|compensation|ctc|package)[:\s]+([^\n,]{3,40})/i)
+    || t.match(/([\u20b9$\u20ac\u00a3]\s*[\d,]+(?:k|K|L|lakh)?(?:\s*[-\u2013]\s*[\u20b9$\u20ac\u00a3]?\s*[\d,]+(?:k|K|L|lakh)?)?\s*(?:\/\s*(?:month|mo|year|yr|pa))?)/i);
+  if (stipMatch) stipend = stipMatch[1].trim();
+
+  // LOCATION
+  let location = 'Remote';
+  const cities = ['bangalore','bengaluru','mumbai','hyderabad','pune','chennai','delhi','noida','gurgaon','kolkata'];
+  const cityFound = cities.find(c => lower.includes(c));
+  if (cityFound) {
+    const map = { bengaluru:'Bangalore', bangalore:'Bangalore', mumbai:'Mumbai',
+      hyderabad:'Hyderabad', pune:'Pune', chennai:'Chennai',
+      delhi:'Delhi', noida:'Delhi', gurgaon:'Delhi', kolkata:'Kolkata' };
+    location = map[cityFound] || cityFound.charAt(0).toUpperCase() + cityFound.slice(1);
+  } else if (/\bremote\b/i.test(t)) {
+    location = 'Remote';
+  }
+
+  // SKILLS — known tech keywords
+  const knownSkills = [
+    'Python','JavaScript','TypeScript','Java','C++','C#','Go','Rust','Ruby','PHP','Swift','Kotlin','R','MATLAB',
+    'React','Angular','Vue','Next.js','Node.js','Express','Django','Flask','FastAPI','Spring','Laravel',
+    'HTML','CSS','Tailwind','Bootstrap','SASS',
+    'SQL','MySQL','PostgreSQL','MongoDB','Redis','Firebase','Supabase','SQLite',
+    'AWS','Azure','GCP','Docker','Kubernetes','Terraform','Git','Linux','Bash',
+    'TensorFlow','PyTorch','Scikit-learn','Pandas','NumPy','Keras','OpenCV','NLP',
+    'Figma','Sketch','Adobe XD','Illustrator','Photoshop',
+    'REST','GraphQL','Microservices','MERN','MEAN',
+    'Excel','Power BI','Tableau','Machine Learning','Deep Learning',
+    'Flutter','React Native','Android','iOS',
+  ];
+  const skills = knownSkills.filter(s => {
+    const escaped = s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return new RegExp('\\b' + escaped + '\\b', 'i').test(t);
+  });
+  // Also grab comma/bullet listed items after skills labels
+  const skillsSection = t.match(/(?:skills?|requirements?|tech(?:nical)?(?:\s+stack)?|tools?)[:\s]+([^\n]{10,200})/gi);
+  if (skillsSection) {
+    skillsSection.forEach(sec => {
+      const items = sec.replace(/^[^:]+:\s*/, '').split(/[,|\u2022\n\/]+/).map(s => s.trim()).filter(s => s.length > 1 && s.length < 30);
+      items.forEach(item => {
+        const clean = item.replace(/^[-\u2013\u2022*]\s*/, '').trim();
+        if (clean && !skills.find(s => s.toLowerCase() === clean.toLowerCase())) skills.push(clean);
+      });
+    });
+  }
+
+  // DOMAIN — keyword scoring
+  const domainMap = [
+    { domain: 'Machine Learning',    kw: ['machine learning','deep learning','tensorflow','pytorch','nlp','artificial intelligence','llm','scikit'] },
+    { domain: 'Data Science',        kw: ['data science','data analysis','data analyst','pandas','numpy','tableau','power bi','statistics'] },
+    { domain: 'Web Development',     kw: ['web dev','frontend','front-end','full stack','fullstack','mern','mean','react','angular','vue','html','css','next.js','node'] },
+    { domain: 'Mobile Development',  kw: ['mobile','android','ios','flutter','react native'] },
+    { domain: 'Backend Development', kw: ['backend','back-end','api','microservice','django','flask','spring','express','laravel'] },
+    { domain: 'Cloud & DevOps',      kw: ['cloud','aws','azure','gcp','devops','docker','kubernetes','terraform','ci/cd','linux'] },
+    { domain: 'Cybersecurity',       kw: ['security','cybersecurity','penetration','ethical hack','network security'] },
+    { domain: 'UI/UX Design',        kw: ['ui/ux','ux design','ui design','figma','sketch','adobe xd','wireframe','user experience'] },
+  ];
+  let domain = '';
+  let bestScore = 0;
+  for (const { domain: d, kw } of domainMap) {
+    const score = kw.filter(k => lower.includes(k)).length;
+    if (score > bestScore) { bestScore = score; domain = d; }
+  }
+
+  // DESCRIPTION — "about the role" section or first 2 sentences
+  let description = '';
+  const aboutMatch = t.match(/(?:about\s+(?:the\s+)?(?:role|internship|position|job|opportunity)[:\s]*\n?)([^\n]{30,}(?:\n[^\n]{10,}){0,3})/i);
+  if (aboutMatch) {
+    description = aboutMatch[1].replace(/\n/g, ' ').trim().slice(0, 300);
+  } else {
+    const sentences = t.match(/[A-Z][^.!?]{30,150}[.!?]/g) || [];
+    description = sentences.slice(0, 2).join(' ').trim().slice(0, 300);
+  }
+
+  return { company, role, duration, stipend, location, skills: [...new Set(skills)], domain, description };
+}
+
+// =========================================================
+// DASHBOARD INIT
+// =========================================================
+function initDashboard() {
+  if (!currentUser) return;
+  const name = currentUser.name || currentUser.fname || 'Student';
+  const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().substr(0, 2);
+  el('dash-avatar').textContent = initials;
+  el('dash-name').textContent = name;
+  const greet = new Date().getHours() < 12 ? 'Good morning' : new Date().getHours() < 17 ? 'Good afternoon' : 'Good evening';
+  el('dash-greeting').textContent = greet + ', ' + name.split(' ')[0] + '!';
+  renderOverview();
+}
+
+async function renderOverview() {
+  const skills = await getSkills();
+  const apps = await getApplications();
+  const internships = await getInternships();
+  cachedInternships = internships;
+
+  el('ov-skills').textContent = skills.length;
+  el('ov-interns').textContent = internships.length;
+  el('ov-apps').textContent = apps.length;
+
+  let bestMatch = 0;
+  internships.forEach(i => { const m = calcMatch(i, skills); if (m > bestMatch) bestMatch = m; });
+  el('ov-match').textContent = bestMatch + '%';
+
+  // Top matches
+  const sorted = [...internships].map(i => ({ ...i, match: calcMatch(i, skills) })).sort((a, b) => b.match - a.match).slice(0, 3);
+  el('ov-top-matches').innerHTML = sorted.length ? sorted.map(i => `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:0.7rem 0;border-bottom:1px solid var(--border)">
+      <div>
+        <div style="font-size:0.88rem;font-weight:500;color:var(--text)">${i.role || i.title}</div>
+        <div style="font-size:0.78rem;color:var(--text3)">${i.company}</div>
+      </div>
+      <span class="status-badge ${i.match>=70?'status-selected':i.match>=40?'status-applied':'status-review'}">${i.match}%</span>
+    </div>`).join('') : '<div class="empty-state" style="padding:1.5rem"><div class="icon">📭</div><p>No internships available yet</p></div>';
+
+  // Skill recommendations
+  renderSkillRecommendations();
+
+  // Recent apps
+  const recentApps = apps.slice(-3).reverse();
+  el('ov-recent-apps').innerHTML = recentApps.length ? recentApps.map(a => {
+    const i = internships.find(x => x.id === a.internId) || { role: 'Unknown', company: '-' };
+    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:0.7rem 0;border-bottom:1px solid var(--border)">
+      <div><div style="font-size:0.88rem;font-weight:500;color:var(--text)">${i.role || i.title}</div>
+      <div style="font-size:0.78rem;color:var(--text3)">${i.company}</div></div>
+      ${statusBadge(a.status)}</div>`;
+  }).join('') : '<div class="empty-state" style="padding:1.5rem"><div class="icon">📋</div><p>No applications yet</p></div>';
+}
+
+// =========================================================
+// INTERNSHIPS
+// =========================================================
+async function renderInternships() {
+  const grid = el('internship-grid');
+  const emptyEl = el('intern-empty');
+  const loadEl = el('intern-loading');
+  const skills = await getSkills();
+  const search = v('intern-search').toLowerCase();
+  const domain = v('intern-domain');
+  const location = v('intern-location');
+  const apps = await getApplications();
+
+  loadEl.style.display = 'block';
+  grid.innerHTML = '';
+  emptyEl.style.display = 'none';
+
+  let internships = await getInternships();
+  cachedInternships = internships;
+  loadEl.style.display = 'none';
+
+  // Read all filter values
+  const stipendFilter = (document.getElementById('filter-stipend') || {}).value || '';
+  const matchFilter   = (document.getElementById('filter-match')   || {}).value || '';
+
+  internships = internships.filter(i => {
+    // Expired toggle
+    // OFF (default): show only active / no-deadline listings
+    // ON: show ONLY expired listings
+    const dl = getDeadlineStatus(i.deadline);
+    const isExpired = dl && dl.status === 'expired';
+    if (showExpiredListings && !isExpired) return false;
+    if (!showExpiredListings && isExpired) return false;
+
+    // Full-text search (role, company, domain, description, skills)
+    if (search && !fullTextMatch(i, search)) return false;
+
+    // Skill chip filters — internship must require at least one active chip
+    if (activeSkillFilters.size > 0) {
+      const req = (i.skills_required || i.skills || []).map(s => s.toLowerCase());
+      if (![...activeSkillFilters].some(f => req.some(r => r.includes(f) || f.includes(r)))) return false;
+    }
+
+    if (domain && i.domain !== domain) return false;
+    if (location && i.location !== location) return false;
+    return true;
+  });
+
+  // Compute match scores first (needed for match filter)
+  internships = internships.map(i => ({ ...i, match: calcMatch(i, skills) }));
+
+  // Stipend filter
+  if (stipendFilter) internships = internships.filter(i => filterByStipend(i, stipendFilter));
+
+  // Match score filter
+  if (matchFilter === 'high') internships = internships.filter(i => i.match >= 70);
+  else if (matchFilter === 'med') internships = internships.filter(i => i.match >= 40 && i.match < 70);
+  else if (matchFilter === 'low') internships = internships.filter(i => i.match < 40);
+
+  internships = internships.sort((a, b) => b.match - a.match);
+
+  if (!internships.length) { emptyEl.style.display = 'block'; return; }
+
+  grid.innerHTML = internships.map(i => {
+    const skReq = i.skills_required || i.skills || [];
+    const matched = getMatchedSkills(i, skills);
+    const applied = apps.some(a => a.internId === i.id);
+    const cls = i.match >= 70 ? 'match-high' : i.match >= 40 ? 'match-med' : 'match-low';
+    const fillCls = i.match >= 70 ? 'high' : i.match >= 40 ? 'med' : 'low';
+    return `
+      <div class="intern-card ${cls}" onclick="openInternModal('${i.id}')">
+        <div class="company-row">
+          <div class="company-logo">${(i.company||'?')[0].toUpperCase()}</div>
+          <div class="company-info">
+            <div style="font-weight:600;font-size:0.95rem">${i.company}</div>
+            <div class="company-name">${i.domain || ''}</div>
+          </div>
+        </div>
+        <div class="intern-title">${i.role || i.title}</div>
+        <div class="intern-tags">
+          ${skReq.slice(0, 5).map(s => `<span class="tag ${matched.includes(s.toLowerCase())?'matched':''}">${s}</span>`).join('')}
+          ${skReq.length > 5 ? `<span class="tag">+${skReq.length-5}</span>` : ''}
+        </div>
+        <div class="match-score">
+          <div class="match-bar"><div class="match-fill ${fillCls}" style="width:${i.match}%"></div></div>
+          <span class="match-pct">${i.match}%</span>
+        </div>
+        <div class="intern-footer">
+          <span class="location-tag">📍 ${i.location || 'Remote'} ${i.duration ? '· '+i.duration : ''}</span>
+          ${applied ? '<span class="applied-badge">✓ Applied</span>' : '<button class="btn btn-primary btn-sm" onclick="event.stopPropagation();applyInternship(\''+i.id+'\')">Apply</button>'}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+async function openInternModal(id) {
+  const internships = cachedInternships.length ? cachedInternships : await getInternships();
+  const i = internships.find(x => x.id === id);
+  if (!i) return;
+  const skills = await getSkills();
+  const matched = getMatchedSkills(i, skills);
+  const missing = getMissingSkills(i, skills);
+  const apps = await getApplications();
+  const applied = apps.some(a => a.internId === i.id);
+  const skReq = i.skills_required || i.skills || [];
+  const match = calcMatch(i, skills);
+
+  el('modal-title').textContent = `${i.role || i.title} @ ${i.company}`;
+  el('modal-body').innerHTML = `
+    <div style="display:flex;gap:0.8rem;flex-wrap:wrap;margin-bottom:1.2rem">
+      <span class="tag">📍 ${i.location||'Remote'}</span>
+      <span class="tag">⏱ ${i.duration||'N/A'}</span>
+      <span class="tag">💰 ${i.stipend||'N/A'}</span>
+      ${i.deadline ? `<span class="tag">📅 Deadline: ${i.deadline}</span>` : ''}
+    </div>
+    ${i.description ? `<p style="color:var(--text2);font-size:0.88rem;line-height:1.7;margin-bottom:1.2rem">${i.description}</p>` : ''}
+    <div style="margin-bottom:1.2rem">
+      <div style="font-size:0.8rem;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.6rem">Required Skills</div>
+      <div class="intern-tags">${skReq.map(s=>`<span class="tag ${matched.includes(s.toLowerCase())?'matched':''}">${s}</span>`).join('')}</div>
+    </div>
+    <div class="match-score" style="margin-bottom:1.2rem">
+      <div style="font-size:0.82rem;color:var(--text2);min-width:80px">Your Match:</div>
+      <div class="match-bar"><div class="match-fill ${match>=70?'high':match>=40?'med':'low'}" style="width:${match}%"></div></div>
+      <span class="match-pct">${match}%</span>
+    </div>
+    ${missing.length ? `
+      <div class="suggestion-box">
+        <h4>🤖 Skills to Learn</h4>
+        <p style="font-size:0.8rem;color:var(--text2);margin-bottom:0.7rem">You're missing: ${missing.join(', ')}</p>
+        <button class="btn btn-ghost btn-sm" id="get-ai-btn" onclick="loadAISuggestions('${id}')">✨ Get Learning Roadmap</button>
+        <div id="ai-suggestions-area"></div>
+      </div>` : `<div class="learn-card"><h4>✅ Great match!</h4><p style="font-size:0.8rem;color:var(--text2)">You have all the required skills for this role.</p></div>`}
+  `;
+
+  el('modal-actions').innerHTML = applied
+    ? `<span class="applied-badge" style="font-size:0.85rem;padding:0.4rem 1rem">✓ Already Applied</span><button class="btn btn-ghost btn-sm" onclick="closeModal('modal-intern')">Close</button>`
+    : `<button class="btn btn-ghost btn-sm" onclick="closeModal('modal-intern')">Cancel</button><button class="btn btn-primary" onclick="applyInternship('${id}');closeModal('modal-intern')">Apply Now</button>`;
+
+  el('modal-intern').classList.add('open');
+}
+
+async function loadAISuggestions(id) {
+  const btn = el('get-ai-btn');
+  const area = el('ai-suggestions-area');
+  const internships = cachedInternships.length ? cachedInternships : await getInternships();
+  const i = internships.find(x => x.id === id);
+  if (!i) return;
+  const skills = await getSkills();
+  const missing = getMissingSkills(i, skills);
+
+  btn.disabled = true; btn.textContent = '⏳ Generating roadmap...';
+  area.innerHTML = `<div style="margin-top:1rem;padding:1rem;background:var(--bg2);border-radius:8px;border:1px solid var(--border)">
+    <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.5rem">
+      <div class="spinner" style="width:16px;height:16px;border-width:2px;flex-shrink:0"></div>
+      <span style="font-size:0.82rem;color:var(--text2)">Building your personalized learning roadmap...</span>
+    </div>
+  </div>`;
+
+  const suggestions = await getAISuggestions(i, missing);
+  btn.style.display = 'none';
+
+  const priorityStyle = {
+    high:   'background:rgba(52,211,153,0.1);border:1px solid rgba(52,211,153,0.3);color:var(--success)',
+    medium: 'background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.3);color:var(--warn)',
+    low:    'background:rgba(99,130,255,0.1);border:1px solid rgba(99,130,255,0.3);color:var(--accent)'
+  };
+
+  area.innerHTML = `
+    <div style="margin-top:1rem">
+      <div style="font-size:0.75rem;color:var(--text3);text-transform:uppercase;letter-spacing:1px;margin-bottom:0.8rem">
+        📍 Personalized roadmap for ${i.role||i.title} @ ${i.company}
+      </div>
+      ${suggestions.map((s, idx) => `
+        <div style="display:flex;gap:0.8rem;padding:0.85rem 0;border-bottom:1px solid var(--border);align-items:flex-start">
+          <div style="flex-shrink:0;width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;font-size:0.72rem;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:1px">${idx+1}</div>
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.3rem;flex-wrap:wrap">
+              <span style="font-size:0.88rem;font-weight:600;color:var(--text)">${s.skill}</span>
+              <span style="font-size:0.7rem;padding:0.15rem 0.5rem;border-radius:4px;${priorityStyle[s.priority]||priorityStyle.low}">${(s.priority||'').toUpperCase()}</span>
+            </div>
+            <p style="font-size:0.81rem;color:var(--text2);line-height:1.6">${s.resource}</p>
+            ${s.timeEstimate ? `<div style="font-size:0.75rem;color:var(--text3);margin-top:0.25rem">⏱ ${s.timeEstimate}</div>` : ''}
+          </div>
+        </div>`).join('')}
+      <div style="padding:0.7rem 0;font-size:0.78rem;color:var(--text3);text-align:center">
+        💡 Add these skills to your profile to boost your match score
+      </div>
+    </div>`;
+}
+
+async function applyInternship(id) {
+  const apps = await getApplications();
+  if (apps.some(a => a.internId === id)) { notify('Already applied!', 'error'); return; }
+
+  // Find the internship to get its admin_id
+  const internships = cachedInternships.length ? cachedInternships : await getInternships();
+  const intern = internships.find(x => x.id === id);
+  const adminId = intern ? (intern.admin_id || null) : null;
+
+  // Snapshot current student skills so admin can always compute match % (bypasses RLS)
+  const studentSkillsSnapshot = await getSkills();
+
+  const newApp = {
+    id: LOCAL.uid(),
+    internId: id,
+    adminId: adminId,
+    userId: currentUser ? currentUser.id : 'unknown',
+    userName: currentUser ? (currentUser.name || currentUser.first_name + ' ' + currentUser.last_name || currentUser.email) : 'Unknown',
+    userEmail: currentUser ? currentUser.email : '-',
+    status: 'Applied',
+    date: new Date().toLocaleDateString(),
+    skills: studentSkillsSnapshot
+  };
+  apps.push(newApp);
+  // Write to local cache immediately so re-renders see it right away
+  LOCAL.set('apps_' + currentUser.id, apps);
+
+  if (isSupabaseConfigured()) {
+    const isValidUUID = (v) => v && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v);
+    // Only send columns that exist in the applications table schema
+    // Do NOT send 'skills' — that column doesn't exist in applications table
+    const payload = {
+      user_id: currentUser.id,
+      intern_id: id,
+      user_name: newApp.userName,
+      user_email: newApp.userEmail,
+      status: 'Applied',
+      date: newApp.date
+    };
+    // Only set admin_id if it's a valid UUID — a bad FK reference will kill the entire insert
+    // Leave it null if uncertain; admin can still see the app via intern_id join
+    if (isValidUUID(adminId)) payload.admin_id = adminId;
+    console.log('[Apply] Inserting application payload:', JSON.stringify(payload));
+    const { data: inserted, error } = await sbClient.from('applications').insert(payload).select().single();
+    if (error) {
+      console.error('[Apply] Supabase insert error:', error.message, error);
+      notify('Failed to submit application: ' + error.message, 'error');
+    } else if (inserted) {
+      console.log('[Apply] Insert success:', inserted);
+      // Replace the temp local app with the real Supabase row (gets the real UUID)
+      const cached = LOCAL.get('apps_' + currentUser.id) || [];
+      const idx = cached.findIndex(a => a.id === newApp.id);
+      const realApp = {
+        id: inserted.id,
+        internId: inserted.intern_id,
+        adminId: inserted.admin_id,
+        userId: inserted.user_id,
+        userName: inserted.user_name,
+        userEmail: inserted.user_email,
+        status: inserted.status || 'Applied',
+        date: inserted.date || newApp.date
+      };
+      if (idx !== -1) cached[idx] = realApp; else cached.push(realApp);
+      LOCAL.set('apps_' + currentUser.id, cached);
+    }
+  } else {
+    const globalApps = LOCAL.get('all_applications') || [];
+    globalApps.push(newApp);
+    LOCAL.set('all_applications', globalApps);
+  }
+
+  addAuditEntry('apply', 'Application Submitted', `${currentUser ? currentUser.name || currentUser.email : 'Student'}`, { target: id.slice(-8) });
+  renderInternships();
+  renderOverview();
+  renderSkillRecommendations();
+  notify('Application submitted! 🎉', 'success');
+}
+
+// =========================================================
+// SKILLS
+// =========================================================
+async function addSkill() {
+  const name = v('new-skill-name').trim();
+  const cat = v('new-skill-cat') || 'Other';
+  if (!name) { notify('Enter a skill name', 'error'); return; }
+  const skills = await getSkills();
+  if (skills.find(s => s.name.toLowerCase() === name.toLowerCase() && s.cat === cat)) { notify('Skill already added in this category', 'error'); return; }
+  skills.push({ id: LOCAL.uid(), name, cat });
+  await saveSkills(skills);
+  el('new-skill-name').value = '';
+  renderSkills();
+  renderOverview();
+  notify('Skill added: ' + name, 'success');
+}
+
+async function removeSkill(id) {
+  const skills = (await getSkills()).filter(s => s.id !== id);
+  await saveSkills(skills);
+  renderSkills();
+  renderOverview();
+}
+
+async function renderSkills() {
+  const skills = await getSkills();
+  el('skill-count').textContent = skills.length;
+  const cats = {};
+  skills.forEach(s => { if (!cats[s.cat]) cats[s.cat] = []; cats[s.cat].push(s); });
+  if (!skills.length) {
+    el('skills-list').innerHTML = '<div class="empty-state"><div class="icon">🛠️</div><h3>No skills yet</h3><p>Add your first skill above to get matched with internships</p></div>';
+    return;
+  }
+  el('skills-list').innerHTML = Object.entries(cats).map(([cat, items]) => `
+    <div style="margin-bottom:1.2rem">
+      <div style="font-size:0.75rem;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:0.6rem">${cat}</div>
+      <div class="skills-container">${items.map(s => `
+        <span class="skill-pill">${s.name}<button onclick="removeSkill('${s.id}')">×</button></span>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+// =========================================================
+// APPLICATIONS
+// =========================================================
+async function renderApplications() {
+  const apps = await getApplications();
+  const internships = await getInternships();
+  el('app-total').textContent = apps.length;
+  el('app-review').textContent = apps.filter(a => a.status === 'Under Review').length;
+  el('app-selected').textContent = apps.filter(a => a.status === 'Selected').length;
+  el('app-rejected').textContent = apps.filter(a => a.status === 'Rejected').length;
+
+  if (!apps.length) {
+    el('applications-table').innerHTML = '<div class="empty-state"><div class="icon">📋</div><h3>No applications yet</h3><p>Browse internships and start applying</p></div>';
+    return;
+  }
+  el('applications-table').innerHTML = `<table>
+    <thead><tr><th>#</th><th>Company</th><th>Role</th><th>Domain</th><th>Applied</th><th>Status</th><th>Action</th></tr></thead>
+    <tbody>${apps.map((a, idx) => {
+      const i = internships.find(x => x.id === a.internId) || { role: 'Unknown', company: '-', domain: '-' };
+      return `<tr>
+        <td style="color:var(--text3)">${idx+1}</td>
+        <td style="font-weight:500;color:var(--text)">${i.company}</td>
+        <td>${i.role || i.title}</td>
+        <td><span style="background:var(--bg2);padding:0.18rem 0.55rem;border-radius:6px;font-size:0.76rem">${i.domain||'-'}</span></td>
+        <td>${a.date}</td>
+        <td>${statusBadge(a.status)}</td>
+        <td><button class="btn btn-danger" onclick="withdrawApp('${a.id}')">Withdraw</button></td>
+      </tr>`;
+    }).join('')}</tbody></table>`;
+}
+
+// updateAppStatus — ADMIN ONLY. Students see read-only status badges.
+async function updateAppStatus(appId, newStatus) {
+  if (!isAdmin) { notify('Only admins can change application status', 'error'); return; }
+
+  if (isSupabaseConfigured()) {
+    const { error } = await sbClient.from('applications').update({ status: newStatus }).eq('id', appId);
+    if (error) { notify('Update failed: ' + error.message, 'error'); return; }
+    // Clear the student's local apps cache so they fetch fresh status on next load
+    for (let k of Object.keys(localStorage)) {
+      if (k.startsWith('apps_')) {
+        try {
+          let apps = JSON.parse(localStorage.getItem(k)) || [];
+          const idx = apps.findIndex(a => a.id === appId);
+          if (idx !== -1) { apps[idx].status = newStatus; localStorage.setItem(k, JSON.stringify(apps)); }
+        } catch(e) {}
+      }
+    }
+    addAuditEntry('status', 'Application Status Changed', `App ID: ${appId.slice(-8)}`, { to: newStatus });
+  } else {
+    const globalApps = LOCAL.get('all_applications') || [];
+    const gIdx = globalApps.findIndex(a => a.id === appId);
+    if (gIdx !== -1) { globalApps[gIdx].status = newStatus; LOCAL.set('all_applications', globalApps); }
+    for (let k of Object.keys(localStorage)) {
+      if (k.startsWith('apps_')) {
+        let apps = [];
+        try { apps = JSON.parse(localStorage.getItem(k)) || []; } catch(e) {}
+        const idx = apps.findIndex(a => a.id === appId);
+        if (idx !== -1) { apps[idx].status = newStatus; localStorage.setItem(k, JSON.stringify(apps)); }
+      }
+    }
+    addAuditEntry('status', 'Application Status Changed', `App ID: ${appId.slice(-8)}`, { to: newStatus });
+  }
+  notify('Status updated to: ' + newStatus, 'success');
+}
+
+async function withdrawApp(id) {
+  const currentApps = await getApplications();
+  const updated = currentApps.filter(a => a.id !== id);
+  LOCAL.set('apps_' + currentUser.id, updated);
+  if (isSupabaseConfigured()) {
+    await sbClient.from('applications').delete().eq('id', id);
+  }
+  renderApplications(); renderOverview();
+  notify('Application withdrawn', 'success');
+}
+
+function statusBadge(s) {
+  const m = { Applied:'applied','Under Review':'review',Selected:'selected',Rejected:'rejected' };
+  return `<span class="status-badge status-${m[s]||'applied'}">${s}</span>`;
+}
+
+// =========================================================
+// PROFILE
+// =========================================================
+function loadProfile() {
+  if (!currentUser) return;
+  el('profile-fname').value = currentUser.fname || currentUser.first_name || '';
+  el('profile-lname').value = currentUser.lname || currentUser.last_name || '';
+  el('profile-usn').value = currentUser.usn || '';
+  el('profile-cgpa').value = currentUser.cgpa || '';
+  el('profile-bio').value = currentUser.bio || '';
+  el('profile-linkedin').value = currentUser.linkedin || '';
+  el('profile-github').value = currentUser.github || '';
+  el('profile-name-display').textContent = currentUser.name || 'Student';
+  el('profile-email-display').textContent = currentUser.email || '';
+  el('profile-branch-display').textContent = currentUser.branch || 'CSE';
+  const name = currentUser.name || 'S';
+  el('profile-avatar').textContent = name.split(' ').map(w=>w[0]).join('').toUpperCase().substr(0,2);
+}
+
+async function saveProfile() {
+  const fname = v('profile-fname').trim(), lname = v('profile-lname').trim();
+  if (!fname) { notify('First name is required', 'error'); return; }
+  const updates = {
+    fname, lname,
+    first_name: fname, last_name: lname,
+    name: (fname + ' ' + lname).trim(),
+    usn: v('profile-usn').trim(),
+    cgpa: v('profile-cgpa').trim(),
+    bio: v('profile-bio').trim(),
+    linkedin: v('profile-linkedin').trim(),
+    github: v('profile-github').trim()
+  };
+  if (isSupabaseConfigured() && currentUser?.id) {
+    const { error } = await sbClient.from('profiles').update({
+      first_name: fname,
+      last_name: lname,
+      usn: updates.usn,
+      cgpa: updates.cgpa,
+      bio: updates.bio,
+      linkedin: updates.linkedin,
+      github: updates.github
+    }).eq('id', currentUser.id);
+    if (error) { notify('Save failed: ' + error.message, 'error'); return; }
+  }
+  const users = LOCAL.get('users') || [];
+  const idx = users.findIndex(u => u.id === currentUser.id);
+  if (idx >= 0) { users[idx] = { ...users[idx], ...updates }; LOCAL.set('users', users); }
+  currentUser = { ...currentUser, ...updates };
+  LOCAL.set('currentUser', currentUser);
+  initDashboard(); loadProfile();
+  notify('Profile saved! ✓', 'success');
+}
+
+// =========================================================
+// ADMIN FUNCTIONS
+// =========================================================
+async function postInternship() {
+  const company = v('ad-company'), role = v('ad-role'), domain = v('ad-domain'),
+        location = v('ad-location'), duration = v('ad-duration'), stipend = v('ad-stipend'),
+        skillsRaw = v('ad-skills'), desc = v('ad-desc'), deadline = v('ad-deadline');
+  clearErrors();
+  if (!company || !role || !domain || !skillsRaw) {
+    el('err-post-general').textContent = 'Please fill in all required fields';
+    el('err-post-general').classList.add('show'); return;
+  }
+  const skills_required = skillsRaw.split(',').map(s => s.trim()).filter(Boolean);
+  const btn = el('post-btn');
+  btn.disabled = true; btn.textContent = '⏳ Publishing...';
+  try {
+    await saveInternship({ company, role, domain, location, duration, stipend, skills_required, description: desc, deadline, title: role });
+    ['ad-company','ad-role','ad-domain','ad-skills','ad-desc','ad-deadline'].forEach(id => { const e = el(id); if(e) e.value=''; });
+    el('ad-duration').value = ''; el('ad-stipend').value = '';
+    notify('Internship posted successfully! 🚀', 'success');
+    addAuditEntry('post', 'Internship Posted', `${role} at ${company}`, { target: company });
+    switchAdminTab('manage', document.querySelector('#page-admin [data-tab="manage"]'));
+  } catch (e) {
+    el('err-post-general').textContent = e.message || 'Failed to post. Try again.';
+    el('err-post-general').classList.add('show');
+  } finally {
+    btn.disabled = false; btn.textContent = '🚀 Publish Internship';
+  }
+}
+
+async function renderManageListings() {
+  const list = el('manage-list');
+  list.innerHTML = '<div class="spinner"></div>';
+  const internships = await getInternships(true);
+  if (!internships.length) {
+    list.innerHTML = '<div class="empty-state"><div class="icon">📭</div><h3>No listings yet</h3><p>Post your first internship using the form</p></div>';
+    return;
+  }
+  list.innerHTML = internships.map(i => {
+    const skReq = i.skills_required || i.skills || [];
+    const domainOpts = ['Data Science','Web Development','Mobile Development','Machine Learning','Backend Development','Cloud & DevOps','Cybersecurity','UI/UX Design']
+      .map(d => `<option value="${d}" ${i.domain===d?'selected':''}>${d}</option>`).join('');
+    const locOpts = ['Remote','Bangalore','Mumbai','Hyderabad','Pune','Chennai']
+      .map(l => `<option value="${l}" ${(i.location||'Remote')===l?'selected':''}>${l}</option>`).join('');
+    return `
+      <div class="section" style="margin-bottom:1rem" id="listing-card-${i.id}">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem">
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:0.5rem">
+              <div style="font-size:1rem;font-weight:600;color:var(--text)">${i.role || i.title}</div>
+              <span class="tag">${i.domain||''}</span>
+            </div>
+            <div style="font-size:0.85rem;color:var(--text2);margin-bottom:0.5rem">${i.company} · ${i.location||'Remote'} · ${i.stipend||'Stipend N/A'} · ${i.duration||''}</div>
+            ${(function(){ const _dl = getDeadlineStatus(i.deadline); if(!_dl) return ''; return '<span class="deadline-badge ' + _dl.cls + '" style="margin-bottom:0.4rem;display:inline-flex">' + (_dl.status==='expired'?'⛔':'📅') + ' ' + i.deadline + ' (' + _dl.label + ')</span>'; })()}
+            <div class="intern-tags" style="margin-bottom:0">${skReq.map(s=>`<span class="tag">${s}</span>`).join('')}</div>
+          </div>
+          <div style="display:flex;gap:0.5rem;flex-shrink:0">
+            <button class="btn btn-ghost btn-sm" onclick="toggleEditListing('${i.id}')">✏️ Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="removeInternship('${i.id}')">🗑 Remove</button>
+          </div>
+        </div>
+
+        <!-- INLINE EDIT FORM -->
+        <div id="edit-form-${i.id}" style="display:none;margin-top:1.2rem;padding-top:1.2rem;border-top:1px solid var(--border)">
+          <div style="font-size:0.8rem;color:var(--accent);font-weight:600;margin-bottom:0.9rem;display:flex;align-items:center;gap:0.4rem">✏️ Edit Listing</div>
+          <div class="grid2">
+            <div class="form-group"><label>Company Name</label><input type="text" id="edit-company-${i.id}" value="${(i.company||'').replace(/"/g,'&quot;')}"></div>
+            <div class="form-group"><label>Role / Title</label><input type="text" id="edit-role-${i.id}" value="${(i.role||i.title||'').replace(/"/g,'&quot;')}"></div>
+          </div>
+          <div class="grid2">
+            <div class="form-group"><label>Domain</label><select id="edit-domain-${i.id}">${domainOpts}</select></div>
+            <div class="form-group"><label>Location</label><select id="edit-location-${i.id}">${locOpts}</select></div>
+          </div>
+          <div class="grid2">
+            <div class="form-group"><label>Duration</label><input type="text" id="edit-duration-${i.id}" value="${(i.duration||'').replace(/"/g,'&quot;')}"></div>
+            <div class="form-group"><label>Stipend</label><input type="text" id="edit-stipend-${i.id}" value="${(i.stipend||'').replace(/"/g,'&quot;')}"></div>
+          </div>
+          <div class="form-group">
+            <label>Required Skills (comma-separated)</label>
+            <input type="text" id="edit-skills-${i.id}" value="${skReq.join(', ')}">
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <textarea id="edit-desc-${i.id}" style="min-height:80px">${i.description||''}</textarea>
+          </div>
+          <div class="form-group">
+            <label>Application Deadline</label>
+            <input type="date" id="edit-deadline-${i.id}" value="${i.deadline||''}">
+          </div>
+          <div style="display:flex;gap:0.7rem;margin-top:0.5rem">
+            <button class="btn btn-primary btn-sm" onclick="saveEditListing('${i.id}')">💾 Save Changes</button>
+            <button class="btn btn-ghost btn-sm" onclick="toggleEditListing('${i.id}')">Cancel</button>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function toggleEditListing(id) {
+  const form = el('edit-form-' + id);
+  form.style.display = form.style.display === 'none' ? 'block' : 'none';
+}
+
+async function saveEditListing(id) {
+  const company  = (el('edit-company-'  + id)||{}).value || '';
+  const role     = (el('edit-role-'     + id)||{}).value || '';
+  const domain   = (el('edit-domain-'   + id)||{}).value || '';
+  const location = (el('edit-location-' + id)||{}).value || '';
+  const duration = (el('edit-duration-' + id)||{}).value || '';
+  const stipend  = (el('edit-stipend-'  + id)||{}).value || '';
+  const skillsRaw= (el('edit-skills-'   + id)||{}).value || '';
+  const desc     = (el('edit-desc-'     + id)||{}).value || '';
+  const deadline = (el('edit-deadline-' + id)||{}).value || '';
+
+  if (!company || !role) { notify('Company and Role are required', 'error'); return; }
+  const skills_required = skillsRaw.split(',').map(s => s.trim()).filter(Boolean);
+
+  try {
+    await updateInternship(id, { company, role, title: role, domain, location, duration, stipend, skills_required, description: desc, deadline });
+    addAuditEntry('post', 'Listing Edited', `${role} at ${company}`, { target: company });
+    notify('Listing updated ✓', 'success');
+    renderManageListings();
+  } catch(e) {
+    notify('Update failed: ' + e.message, 'error');
+  }
+}
+
+async function removeInternship(id) {
+  if (!confirm('Remove this internship listing?')) return;
+  await deleteInternship(id);
+  addAuditEntry('delete', 'Listing Removed', `Internship ID: ${id.slice(-8)}`);
+  notify('Listing removed', 'success');
+  renderManageListings();
+}
+
+async function renderStudentsTable() {
+  const t = el('students-table');
+  t.innerHTML = '<div class="empty-state"><div class="icon">⏳</div><p>Loading students...</p></div>';
+  const users = await getAllStudents();
+  if (!users.length) { t.innerHTML = '<div class="empty-state"><div class="icon">👥</div><p>No students registered yet</p></div>'; return; }
+  t.innerHTML = `<table>
+    <thead><tr><th>#</th><th>Name</th><th>Email</th><th>USN</th><th>Branch</th><th>Semester</th><th>Registered</th></tr></thead>
+    <tbody>${users.map((u,i)=>`<tr>
+      <td style="color:var(--text3)">${i+1}</td>
+      <td style="font-weight:500;color:var(--text)">${u.name.trim()||'-'}</td>
+      <td>${u.email}</td>
+      <td>${u.usn||'-'}</td>
+      <td>${u.branch||'-'}</td>
+      <td>${u.sem||'-'}</td>
+      <td>${u.created?u.created.slice(0,10):'-'}</td>
+    </tr>`).join('')}</tbody></table>`;
+}
+
+async function renderAdminApps() {
+  // Fetch ALL internships so we can resolve intern details for any application
+  const internships = await getInternships(false);
+  const t = el('admin-apps-table');
+  t.innerHTML = '<div class="empty-state"><div class="icon">⏳</div><p>Loading applications...</p></div>';
+
+  let allApps = [];
+
+  if (isSupabaseConfigured()) {
+    // Fetch ALL applications — admin sees everything students have submitted
+    const { data, error } = await sbClient
+      .from('applications')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (error) {
+      console.error('Supabase fetch error:', error.message);
+      t.innerHTML = '<div class="empty-state"><div class="icon">⚠️</div><h3>Error loading applications</h3><p>' + error.message + '</p><p style="font-size:0.78rem;margin-top:0.5rem;color:var(--text3)">Check Supabase RLS: applications table needs SELECT policy for all rows.</p></div>';
+      return;
+    } else {
+      console.log('[Admin Apps] Fetched', (data||[]).length, 'applications from Supabase');
+      allApps = (data || []).map(a => ({
+        id: a.id,
+        internId: a.intern_id,
+        userId: a.user_id,
+        userName: a.user_name || '-',
+        userEmail: a.user_email || '-',
+        status: a.status || 'Applied',
+        date: a.date || '-',
+        skills: a.skills || []
+      }));
+    }
+  } else {
+    const globalApps = getAllApplications();
+    allApps = currentAdminUser
+      ? globalApps.filter(a => a.adminId === currentAdminUser.id)
+      : globalApps;
+  }
+
+  if (!allApps.length) {
+    t.innerHTML = '<div class="empty-state"><div class="icon">📊</div><h3>No applications yet</h3><p>Students have not applied to any internships yet</p></div>';
+    return;
+  }
+
+  // Normalize skills from any format into [{name}] objects
+  function normalizeSkills(raw) {
+    if (!raw || !Array.isArray(raw)) return [];
+    return raw.map(s => {
+      if (typeof s === 'string') return { name: s };
+      if (s && typeof s === 'object' && s.name) return s;
+      return null;
+    }).filter(Boolean);
+  }
+
+  // Resolve match % for every application
+  const appRows = await Promise.all(allApps.map(async a => {
+    let intern = internships.find(x => String(x.id) === String(a.internId || a.intern_id));
+
+    if (!intern && (a.internId || a.intern_id) && isSupabaseConfigured()) {
+      try {
+        const { data } = await sbClient.from('internships').select('*').eq('id', a.internId || a.intern_id).single();
+        if (data) intern = data;
+      } catch(e) {}
+    }
+    if (!intern) intern = { role: 'Unknown', company: '-', skills_required: [], skills: [] };
+
+    // Fetch student skills live from the skills table
+    let studentSkills = normalizeSkills(a.skills || a.user_skills);
+    if (!studentSkills.length) {
+      const uid = a.userId || a.user_id;
+      if (uid && isSupabaseConfigured()) {
+        try {
+          const { data: skillRows } = await sbClient.from('skills').select('name, cat').eq('user_id', uid);
+          if (skillRows && skillRows.length) studentSkills = skillRows.map(s => ({ name: s.name, category: s.cat }));
+        } catch(e) {}
+      }
+      if (!studentSkills.length && uid) studentSkills = normalizeSkills(LOCAL.get('skills_' + uid));
+    }
+
+    const match = calcMatch(intern, studentSkills);
+    console.log('[Match]', (a.userName || a.user_name), '→', intern.role, '@', intern.company,
+      '| skills:', studentSkills.map(s => s.name),
+      '| required:', (intern.skills_required || intern.skills || []),
+      '| match:', match + '%');
+
+    return { a, intern, match };
+  }));
+
+  const statusOptions = ['Applied', 'Under Review', 'Selected', 'Rejected'];
+  t.innerHTML = `<table>
+    <thead><tr>
+      <th>#</th><th>Student</th><th>Email</th><th>Company</th><th>Role</th>
+      <th>Match</th><th>Status</th><th>Date</th>
+    </tr></thead>
+    <tbody>${appRows.map(({ a, intern, match }, i) => {
+      const opts = statusOptions.map(s =>
+        `<option value="${s}" ${a.status === s ? 'selected' : ''}>${s}</option>`
+      ).join('');
+      const matchColor = match >= 70 ? 'var(--success)' : match >= 40 ? 'var(--accent)' : 'var(--warn)';
+      const matchBg    = match >= 70 ? 'rgba(52,211,153,0.1)' : match >= 40 ? 'rgba(99,130,255,0.1)' : 'rgba(251,191,36,0.1)';
+      return `<tr>
+        <td style="color:var(--text3)">${i + 1}</td>
+        <td style="color:var(--text);font-weight:500">${a.userName}</td>
+        <td style="color:var(--text2);font-size:0.8rem">${a.userEmail}</td>
+        <td style="color:var(--text2)">${intern.company}</td>
+        <td style="color:var(--text2)">${intern.role || intern.title || '-'}</td>
+        <td>
+          <span style="display:inline-block;background:${matchBg};color:${matchColor};
+            border:1px solid ${matchColor}33;border-radius:50px;
+            padding:0.18rem 0.65rem;font-size:0.73rem;font-weight:600;min-width:46px;text-align:center">
+            ${match}%
+          </span>
+        </td>
+        <td>
+          <select onchange="this.disabled=true;updateAppStatus('${a.id}', this.value).finally(()=>this.disabled=false)"
+            style="background:var(--bg2);border:1px solid var(--border);color:var(--text);
+                   border-radius:6px;padding:0.3rem 0.5rem;font-size:0.78rem;cursor:pointer;outline:none">
+            ${opts}
+          </select>
+        </td>
+        <td style="color:var(--text3);font-size:0.82rem">${a.date}</td>
+      </tr>`;
+    }).join('')}</tbody></table>`;
+}
+
+// duplicate updateAppStatus removed — see async version above
+
+// =========================================================
+// MODAL
+// =========================================================
+function closeModal(id) { el(id).classList.remove('open'); }
+el('modal-intern').addEventListener('click', e => { if (e.target === el('modal-intern')) closeModal('modal-intern'); });
+
+// =========================================================
+// UTILS
+// =========================================================
+function v(id) { return (document.getElementById(id)||{}).value||''; }
+function el(id) { return document.getElementById(id); }
+function showErr(id) { const e = document.getElementById(id); if(e) e.classList.add('show'); }
+function clearErrors() { document.querySelectorAll('.form-error').forEach(e => e.classList.remove('show')); }
+
+function notify(msg, type='success') {
+  const c = el('notif-container');
+  const n = document.createElement('div');
+  n.className = 'notif-item ' + type;
+  n.textContent = msg;
+  c.appendChild(n);
+  setTimeout(() => n.remove(), 3500);
+}
+
+function toggleAdminRegForm(showReg) {
+  el('admin-login-form').style.display = showReg ? 'none' : 'block';
+  el('admin-reg-form').style.display = showReg ? 'block' : 'none';
+  clearErrors();
+}
+
+// =========================================================
+// INIT
+// =========================================================
+
+// =========================================================
+// AUDIT LOG SYSTEM
+// =========================================================
+const AUDIT_KEY = 'interniq_audit_log';
+function getAuditLog() {
+  try { return JSON.parse(localStorage.getItem(AUDIT_KEY)) || []; } catch(e) { return []; }
+}
+function addAuditEntry(type, action, detail, extra = {}) {
+  const log = getAuditLog();
+  const entry = {
+    id: (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : Date.now().toString(),
+    type, action, detail,
+    adminId: currentAdminUser ? currentAdminUser.id : null,
+    adminName: currentAdminUser ? (currentAdminUser.name || currentAdminUser.email) : 'System',
+    timestamp: new Date().toISOString(),
+    ...extra
+  };
+  log.unshift(entry);
+  // Keep last 500 entries
+  if (log.length > 500) log.splice(500);
+  localStorage.setItem(AUDIT_KEY, JSON.stringify(log));
+  return entry;
+}
+
+let currentAuditFilter = 'all';
+function filterAudit(type, btn) {
+  currentAuditFilter = type;
+  document.querySelectorAll('.audit-filter-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderAuditLog();
+}
+
+function renderAuditLog() {
+  const container = document.getElementById('audit-log-container');
+  if (!container) return;
+  let log = getAuditLog();
+  if (currentAuditFilter !== 'all') {
+    log = log.filter(e => e.type === currentAuditFilter);
+  }
+  if (!log.length) {
+    container.innerHTML = '<div class="empty-state"><div class="icon">📋</div><h3>No audit entries yet</h3><p>Actions like posting, deleting, and status changes will appear here</p></div>';
+    return;
+  }
+  const iconMap = { status: '🔄', post: '🚀', delete: '🗑️', apply: '📝' };
+  const clsMap = { status: 'status', post: 'post', delete: 'delete', apply: 'apply' };
+  container.innerHTML = log.map(e => {
+    const t = new Date(e.timestamp);
+    const timeStr = t.toLocaleDateString() + ' ' + t.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    let detailHtml = `<span style="color:var(--text2)">${e.detail}</span>`;
+    if (e.from && e.to) {
+      detailHtml = `<span class="audit-from">${e.from}</span> <span style="color:var(--text3);font-size:0.7rem">→</span> <span class="audit-to">${e.to}</span>`;
+    }
+    return `<div class="audit-entry">
+      <div class="audit-icon ${clsMap[e.type]||'status'}">${iconMap[e.type]||'📌'}</div>
+      <div class="audit-meta">
+        <div class="audit-action">${e.action}</div>
+        <div class="audit-detail">${detailHtml} ${e.target ? `· <span style="color:var(--text2)">${e.target}</span>` : ''}</div>
+        <div style="font-size:0.72rem;color:var(--text3);margin-top:3px">by ${e.adminName || 'System'} · ${timeStr}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// =========================================================
+// ANALYTICS DASHBOARD
+// =========================================================
+async function renderAnalytics() {
+  const statsEl = document.getElementById('analytics-stats');
+  const statusChartEl = document.getElementById('analytics-status-chart');
+  const listingsChartEl = document.getElementById('analytics-listings-chart');
+  const funnelEl = document.getElementById('analytics-funnel');
+  if (!statsEl) return;
+
+  statsEl.innerHTML = '<div class="spinner" style="grid-column:1/-1"></div>';
+
+  const internships = await getInternships(true);
+  let allApps = [];
+
+  if (isSupabaseConfigured()) {
+    const adminId = currentAdminUser ? currentAdminUser.id : null;
+    const isValidUUID = adminId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(adminId);
+    let query = sbClient.from('applications').select('*');
+    if (isValidUUID) query = query.eq('admin_id', adminId);
+    const { data } = await query;
+    allApps = (data || []).map(a => ({
+      id: a.id, internId: a.intern_id, status: a.status || 'Applied',
+      userName: a.user_name, userEmail: a.user_email, date: a.date
+    }));
+  } else {
+    const global = LOCAL.get('all_applications') || [];
+    allApps = currentAdminUser
+      ? global.filter(a => a.adminId === currentAdminUser.id || !a.adminId)
+      : global;
+  }
+
+  const total = allApps.length;
+  const byStatus = {Applied:0,'Under Review':0,Selected:0,Rejected:0};
+  allApps.forEach(a => { if (byStatus[a.status] !== undefined) byStatus[a.status]++; });
+  const selectionRate = total ? Math.round((byStatus['Selected']/total)*100) : 0;
+  const reviewRate = total ? Math.round(((byStatus['Under Review']+byStatus['Selected'])/total)*100) : 0;
+
+  statsEl.innerHTML = `
+    <div class="analytics-card blue"><div class="analytics-label">Total Listings</div><div class="analytics-value blue">${internships.length}</div><div class="analytics-sub">Active postings</div></div>
+    <div class="analytics-card purple"><div class="analytics-label">Total Applications</div><div class="analytics-value purple">${total}</div><div class="analytics-sub">All time</div></div>
+    <div class="analytics-card green"><div class="analytics-label">Selected</div><div class="analytics-value green">${byStatus['Selected']}</div><div class="analytics-sub">${selectionRate}% selection rate</div></div>
+    <div class="analytics-card amber"><div class="analytics-label">Under Review</div><div class="analytics-value amber">${byStatus['Under Review']}</div><div class="analytics-sub">${reviewRate}% progressed</div></div>
+    <div class="analytics-card red"><div class="analytics-label">Rejected</div><div class="analytics-value red">${byStatus['Rejected']}</div><div class="analytics-sub">${total ? Math.round((byStatus['Rejected']/total)*100) : 0}% rejection rate</div></div>
+  `;
+
+  // Status bar chart
+  const maxStatus = Math.max(...Object.values(byStatus), 1);
+  const statusColors = { Applied: 'var(--accent)', 'Under Review': 'var(--warn)', Selected: 'var(--success)', Rejected: 'var(--danger)' };
+  statusChartEl.innerHTML = '<div class="chart-bar-wrap">' +
+    Object.entries(byStatus).map(([s, n]) => `
+      <div class="chart-bar-row">
+        <div class="chart-bar-label">${s}</div>
+        <div class="chart-bar-bg"><div class="chart-bar-fill" style="width:${(n/maxStatus*100)}%;background:${statusColors[s]}"></div></div>
+        <div class="chart-bar-val">${n}</div>
+      </div>`).join('') + '</div>';
+
+  // Top listings bar chart
+  const appsByIntern = {};
+  allApps.forEach(a => { appsByIntern[a.internId] = (appsByIntern[a.internId] || 0) + 1; });
+  const sorted = internships.map(i => ({ ...i, count: appsByIntern[i.id] || 0 })).sort((a,b) => b.count-a.count).slice(0,5);
+  const maxIntern = Math.max(...sorted.map(i => i.count), 1);
+  listingsChartEl.innerHTML = sorted.length ? '<div class="chart-bar-wrap">' +
+    sorted.map(i => `
+      <div class="chart-bar-row">
+        <div class="chart-bar-label" style="font-size:0.73rem;max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${i.role||i.title} @ ${i.company}">${i.company}</div>
+        <div class="chart-bar-bg"><div class="chart-bar-fill" style="width:${(i.count/maxIntern*100)}%;background:var(--accent2)"></div></div>
+        <div class="chart-bar-val">${i.count}</div>
+      </div>`).join('') + '</div>'
+    : '<div class="empty-state" style="padding:1.5rem"><div class="icon">📭</div><p>No applications yet</p></div>';
+
+  // Conversion funnel
+  funnelEl.innerHTML = `<div>
+    ${[['👁 Listings Posted', internships.length, 'var(--accent)'],
+       ['📝 Applications Received', total, 'var(--accent2)'],
+       ['🔍 Under Review', byStatus['Under Review'] + byStatus['Selected'], 'var(--warn)'],
+       ['✅ Selected', byStatus['Selected'], 'var(--success)']].map(([label, n, color]) => `
+      <div class="funnel-row">
+        <div class="funnel-label">${label}</div>
+        <div class="funnel-bar-bg"><div class="funnel-bar-fill" style="width:${n?Math.max((n/Math.max(internships.length,1,total))*100,8):0}%;background:${color}"></div></div>
+        <div class="funnel-count" style="color:${color}">${n}</div>
+      </div>`).join('')}
+  </div>`;
+}
+
+// =========================================================
+// DEADLINE / EXPIRY LOGIC
+// =========================================================
+let showExpiredListings = false;
+function toggleExpiredFilter(toggleEl) {
+  showExpiredListings = !showExpiredListings;
+  toggleEl.classList.toggle('on', showExpiredListings);
+  renderInternships();
+}
+
+function getDeadlineStatus(deadline) {
+  if (!deadline) return null;
+  const d = new Date(deadline);
+  if (isNaN(d.getTime())) return null;
+  const now = new Date();
+  const daysLeft = Math.ceil((d - now) / (1000 * 60 * 60 * 24));
+  if (daysLeft < 0) return { status: 'expired', label: 'Expired', daysLeft, cls: 'deadline-expired' };
+  if (daysLeft <= 7) return { status: 'soon', label: `${daysLeft}d left`, daysLeft, cls: 'deadline-soon' };
+  return { status: 'ok', label: `${daysLeft}d left`, daysLeft, cls: 'deadline-ok' };
+}
+
+// =========================================================
+// FULL-TEXT SEARCH
+// =========================================================
+let activeSkillFilters = new Set();
+
+async function buildQuickSkillChips() {
+  const skills = await getSkills();
+  const chips = document.getElementById('quick-skill-chips');
+  if (!chips || !skills.length) return;
+  chips.innerHTML = skills.map(s => `
+    <span class="filter-chip ${activeSkillFilters.has(s.name.toLowerCase()) ? 'active' : ''}"
+          onclick="toggleSkillFilter('${s.name.toLowerCase()}', this)">${s.name}</span>
+  `).join('');
+}
+
+function toggleSkillFilter(skill, el) {
+  if (activeSkillFilters.has(skill)) activeSkillFilters.delete(skill);
+  else activeSkillFilters.add(skill);
+  el.classList.toggle('active');
+  renderInternships();
+}
+
+function highlightText(text, query) {
+  if (!query || !text) return text || '';
+  try {
+    const escaped = query.replace(/[-.*+?^${}()|[\]\\]/g, '\\$&');
+    return text.replace(new RegExp('(' + escaped + ')', 'gi'), '<span class="search-highlight">$1</span>');
+  } catch(e) { return text; }
+}
+
+function fullTextMatch(intern, search) {
+  if (!search) return true;
+  const q = search.toLowerCase();
+  const fields = [
+    intern.role, intern.title, intern.company, intern.domain,
+    intern.description, intern.location,
+    ...(intern.skills_required || intern.skills || [])
+  ].map(f => (f || '').toLowerCase());
+  return fields.some(f => f.includes(q));
+}
+
+function filterByStipend(intern, stipendFilter) {
+  if (!stipendFilter) return true;
+  const s = (intern.stipend || '').toLowerCase().replace(/[^0-9]/g,'');
+  const n = parseInt(s) || 0;
+  if (stipendFilter === 'unpaid') return n === 0 || !intern.stipend || intern.stipend.toLowerCase().includes('unpaid');
+  if (stipendFilter === 'low') return n > 0 && n < 10000;
+  if (stipendFilter === 'mid') return n >= 10000 && n <= 20000;
+  if (stipendFilter === 'high') return n > 20000;
+  return true;
+}
+
+// =========================================================
+// SKILL RECOMMENDATION ENGINE
+// =========================================================
+async function renderSkillRecommendations() {
+  const skills = await getSkills();
+  const section = document.getElementById('rec-engine-section');
+  const cards = document.getElementById('rec-engine-cards');
+  if (!section || !cards) return;
+
+  if (!skills.length) { section.style.display = 'none'; return; }
+
+  const internships = cachedInternships.length ? cachedInternships : await getInternships();
+  cachedInternships = internships;
+
+  // Find top 3 near-miss internships (40-90% match with 1-3 missing skills)
+  const nearMiss = internships
+    .map(i => {
+      const match = calcMatch(i, skills);
+      const missing = getMissingSkills(i, skills);
+      return { ...i, match, missing };
+    })
+    .filter(i => i.match >= 30 && i.match < 90 && i.missing.length > 0 && i.missing.length <= 5)
+    .sort((a, b) => b.match - a.match)
+    .slice(0, 3);
+
+  if (!nearMiss.length) { section.style.display = 'none'; return; }
+
+  section.style.display = 'block';
+  const apps = getApplications();
+
+  cards.innerHTML = nearMiss.map(i => {
+    const applied = apps.some(a => a.internId === i.id);
+    const matchColor = i.match >= 70 ? 'var(--success)' : i.match >= 40 ? 'var(--accent)' : 'var(--warn)';
+    const matched = getMatchedSkills(i, skills);
+    const circumference = 2 * Math.PI * 16;
+    const offset = circumference - (i.match / 100) * circumference;
+    return `<div class="rec-card">
+      <div class="rec-card-head">
+        <div>
+          <div class="rec-card-title">${i.role || i.title} @ ${i.company}</div>
+          <div style="font-size:0.76rem;color:var(--text3)">${i.domain || ''} · ${i.location || 'Remote'}</div>
+        </div>
+        <div class="rec-score-ring">
+          <svg width="42" height="42" viewBox="0 0 42 42">
+            <circle cx="21" cy="21" r="16" fill="none" stroke="var(--bg2)" stroke-width="4"/>
+            <circle cx="21" cy="21" r="16" fill="none" stroke="${matchColor}" stroke-width="4"
+              stroke-dasharray="${circumference}" stroke-dashoffset="${offset}" stroke-linecap="round"/>
+          </svg>
+          <div class="rec-score-text" style="color:${matchColor}">${i.match}%</div>
+        </div>
+      </div>
+      <div class="rec-skills-needed">
+        ${matched.map(s => `<span class="rec-skill-have">✓ ${s}</span>`).join('')}
+        ${i.missing.slice(0,4).map(s => `<span class="rec-skill-needed">+ ${s}</span>`).join('')}
+      </div>
+      <div style="display:flex;gap:0.6rem;margin-top:0.8rem">
+        <button class="btn btn-ghost btn-sm" onclick="openInternModal('${i.id}')">View Details</button>
+        ${!applied ? `<button class="btn btn-primary btn-sm" onclick="applyInternship('${i.id}')">Apply Now</button>` : '<span class="applied-badge" style="font-size:0.74rem">✓ Applied</span>'}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+
+// =========================================================
+// STUDENT ANALYTICS
+// =========================================================
+async function renderStudentAnalytics() {
+  const statsEl = document.getElementById('student-analytics-stats');
+  const statusChartEl = document.getElementById('student-status-chart');
+  const matchChartEl = document.getElementById('student-match-chart');
+  const recCardsEl = document.getElementById('student-rec-cards');
+  if (!statsEl) return;
+
+  const apps = await getApplications();
+  const skills = await getSkills();
+  const internships = cachedInternships.length ? cachedInternships : await getInternships();
+  cachedInternships = internships;
+
+  const byStatus = { Applied: 0, 'Under Review': 0, Selected: 0, Rejected: 0 };
+  apps.forEach(a => { if (byStatus[a.status] !== undefined) byStatus[a.status]++; });
+
+  const successRate = apps.length ? Math.round((byStatus['Selected'] / apps.length) * 100) : 0;
+  const avgMatch = internships.length ? Math.round(
+    internships.reduce((sum, i) => sum + calcMatch(i, skills), 0) / internships.length
+  ) : 0;
+  const highMatchCount = internships.filter(i => calcMatch(i, skills) >= 70).length;
+
+  statsEl.innerHTML = `
+    <div class="analytics-card blue"><div class="analytics-label">Total Applied</div><div class="analytics-value blue">${apps.length}</div><div class="analytics-sub">All applications</div></div>
+    <div class="analytics-card green"><div class="analytics-label">Selected</div><div class="analytics-value green">${byStatus['Selected']}</div><div class="analytics-sub">${successRate}% success rate</div></div>
+    <div class="analytics-card amber"><div class="analytics-label">Avg Match Score</div><div class="analytics-value amber">${avgMatch}%</div><div class="analytics-sub">Across all listings</div></div>
+    <div class="analytics-card purple"><div class="analytics-label">High Matches</div><div class="analytics-value purple">${highMatchCount}</div><div class="analytics-sub">70%+ skill match</div></div>
+  `;
+
+  const statusColors = { Applied: 'var(--accent)', 'Under Review': 'var(--warn)', Selected: 'var(--success)', Rejected: 'var(--danger)' };
+  const maxStatus = Math.max(...Object.values(byStatus), 1);
+  statusChartEl.innerHTML = '<div class="chart-bar-wrap">' +
+    Object.entries(byStatus).map(([s, n]) => `
+      <div class="chart-bar-row">
+        <div class="chart-bar-label">${s}</div>
+        <div class="chart-bar-bg"><div class="chart-bar-fill" style="width:${(n/maxStatus*100)}%;background:${statusColors[s]}"></div></div>
+        <div class="chart-bar-val">${n}</div>
+      </div>`).join('') + '</div>';
+
+  // Match distribution
+  const buckets = [
+    { label: '0–30% (Low)', min: 0, max: 30, color: 'var(--danger)' },
+    { label: '30–60% (Medium)', min: 30, max: 60, color: 'var(--warn)' },
+    { label: '60–80% (Good)', min: 60, max: 80, color: 'var(--accent)' },
+    { label: '80–100% (Great)', min: 80, max: 101, color: 'var(--success)' },
+  ].map(b => ({ ...b, count: internships.filter(i => { const m = calcMatch(i, skills); return m >= b.min && m < b.max; }).length }));
+  const maxBucket = Math.max(...buckets.map(b => b.count), 1);
+  matchChartEl.innerHTML = '<div class="chart-bar-wrap">' +
+    buckets.map(b => `
+      <div class="chart-bar-row">
+        <div class="chart-bar-label" style="font-size:0.73rem">${b.label}</div>
+        <div class="chart-bar-bg"><div class="chart-bar-fill" style="width:${(b.count/maxBucket*100)}%;background:${b.color}"></div></div>
+        <div class="chart-bar-val">${b.count}</div>
+      </div>`).join('') + '</div>';
+
+  // Near-miss recommendations in analytics tab
+  if (recCardsEl) {
+    const nearMiss = internships
+      .map(i => ({ ...i, match: calcMatch(i, skills), missing: getMissingSkills(i, skills) }))
+      .filter(i => i.match >= 40 && i.match < 90 && i.missing.length > 0 && i.missing.length <= 3)
+      .sort((a, b) => b.match - a.match)
+      .slice(0, 4);
+
+    if (!nearMiss.length) {
+      recCardsEl.innerHTML = '<div class="empty-state" style="padding:1.5rem"><div class="icon">🎉</div><h3>You&#39;re doing great!</h3><p>Add more skills to unlock more recommendations.</p></div>';
+    } else {
+      const appsArr = await getApplications();
+      recCardsEl.innerHTML = nearMiss.map(i => {
+        const applied = appsArr.some(a => a.internId === i.id);
+        const matchColor = i.match >= 70 ? 'var(--success)' : 'var(--accent)';
+        const circumference = 2 * Math.PI * 16;
+        const offset = circumference - (i.match / 100) * circumference;
+        return `<div class="rec-card">
+          <div class="rec-card-head">
+            <div>
+              <div class="rec-card-title">${i.role || i.title} @ ${i.company}</div>
+              <div style="font-size:0.76rem;color:var(--text3)">Learn ${i.missing.slice(0,2).join(', ')} to boost your match</div>
+            </div>
+            <div class="rec-score-ring">
+              <svg width="42" height="42" viewBox="0 0 42 42">
+                <circle cx="21" cy="21" r="16" fill="none" stroke="var(--bg2)" stroke-width="4"/>
+                <circle cx="21" cy="21" r="16" fill="none" stroke="${matchColor}" stroke-width="4"
+                  stroke-dasharray="${circumference}" stroke-dashoffset="${offset}" stroke-linecap="round"/>
+              </svg>
+              <div class="rec-score-text" style="color:${matchColor}">${i.match}%</div>
+            </div>
+          </div>
+          <div class="rec-skills-needed">
+            ${i.missing.map(s => `<span class="rec-skill-needed">+ ${s}</span>`).join('')}
+          </div>
+          <div style="display:flex;gap:0.6rem;margin-top:0.8rem">
+            <button class="btn btn-ghost btn-sm" onclick="openInternModal('${i.id}')">View</button>
+            ${!applied ? `<button class="btn btn-primary btn-sm" onclick="applyInternship('${i.id}')">Apply</button>` : '<span class="applied-badge" style="font-size:0.74rem">✓ Applied</span>'}
+          </div>
+        </div>`;
+      }).join('');
+    }
+  }
+}
+window.onload = async function() {
+  // Initialize Supabase FIRST before any other code runs
+  initSupabase();
+
+  el('page-loader').style.transition = 'opacity 0.4s';
+  setTimeout(() => {
+    el('page-loader').style.opacity = '0';
+    setTimeout(() => { el('page-loader').style.display = 'none'; }, 400);
+  }, 800);
+
+  // Restore student session
+  if (isSupabaseConfigured()) {
+    const { data: { session } } = await sbClient.auth.getSession();
+    if (session?.user) {
+      const { data: profile } = await sbClient.from('profiles').select('*').eq('id', session.user.id).single();
+      currentUser = { ...session.user, ...(profile||{}), name: profile ? profile.first_name + ' ' + profile.last_name : session.user.email };
+      initDashboard();
+      showPage('page-dashboard');
+      return;
+    }
+  } else {
+    const saved = LOCAL.get('currentUser');
+    if (saved && saved.id) { currentUser = saved; initDashboard(); showPage('page-dashboard'); return; }
+
+    // Restore admin session
+    const adminSess = LOCAL.get('adminSession');
+    if (adminSess && adminSess.id) {
+      const admins = LOCAL.get('admins') || [];
+      const admin = admins.find(a => a.id === adminSess.id);
+      if (admin) {
+        isAdmin = true;
+        currentAdminUser = admin;
+        el('admin-dash-name').textContent = admin.name || admin.email.split('@')[0];
+        const initials = (admin.name || admin.email).split(' ').map(w=>w[0]).join('').toUpperCase().substr(0,2);
+        el('admin-dash-avatar').textContent = initials;
+        showPage('page-admin');
+        renderSupabaseBanner();
+        renderManageListings();
+        return;
+      }
+    }
+  }
+};
+</script>
+</body>
+</html>
